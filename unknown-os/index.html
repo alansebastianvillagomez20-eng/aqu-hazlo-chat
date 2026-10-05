@@ -161,84 +161,7 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 .cloud-panel h2{margin:7px 0 5px;font-size:23px;letter-spacing:-.05em}.cloud-panel p{font-size:9px;line-height:1.55;color:#727272;margin:0 0 17px}.cloud-panel input{width:100%;margin-top:8px;background:#050505;border:1px solid #292929;color:#eee;border-radius:7px;padding:11px;outline:none}.cloud-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:13px}.cloud-actions button{border:1px solid #333;background:#111;color:#ddd;border-radius:7px;padding:10px;font-size:8px;font-weight:800;letter-spacing:.1em;cursor:pointer}.cloud-actions .primary{background:#eee;color:#050505}.cloud-status{margin-top:12px;min-height:15px;color:#777;font-size:8px}.cloud-user{display:none;border-top:1px solid #222;margin-top:15px;padding-top:14px}.cloud-user b{font-size:9px}.cloud-user button{margin-top:10px;border:1px solid #333;background:#111;color:#aaa;border-radius:6px;padding:8px;font-size:7px;cursor:pointer}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script id="unknown-cloud-js">
-(function(){
-  const SUPABASE_URL="https://mlvewtibzfxjizehtdji.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY="sb_publishable_C6T6s78TJPD1lOtTBXX8Dg_2YwBRVwe";
-  const cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-  let cloudUser=null,cloudTimer=null,cloudHydrating=false;
-  const localWrite=()=>localStorage.setItem(KEY,JSON.stringify(D));
-  const cmsg=x=>{const el=document.getElementById("cloudStatus");if(el)el.textContent=x||""};
-  const cstate=(on,label)=>{document.getElementById("cloudDot").classList.toggle("on",!!on);document.getElementById("cloudLabel").textContent=label};
-  const mergeCloud=(local,remote)=>{
-    const a=Array.isArray(local.trades)?local.trades:[],b=Array.isArray(remote.trades)?remote.trades:[];
-    const map=new Map();[...a,...b].forEach(t=>map.set(String(t.id),t));
-    const merged={...local,...remote,trades:[...map.values()].sort((x,y)=>Number(x.id)-Number(y.id))};
-    if(local.checkin && remote.checkin) merged.checkin=local.checkin;
-    else merged.checkin=local.checkin||remote.checkin||null;
-    merged.fundingPhase=Math.max(Number(local.fundingPhase||1),Number(remote.fundingPhase||1));
-    return merged;
-  };
-  async function cloudSaveNow(){
-    if(!cloudUser||cloudHydrating)return;
-    const payload=JSON.parse(JSON.stringify(D));
-    const {error}=await cloudClient.from("unknown_os_data").upsert({user_id:cloudUser.id,payload,updated_at:new Date().toISOString()},{onConflict:"user_id"});
-    if(error){cstate(false,"CLOUD ERROR");cmsg("Cloud no disponible: "+error.message);return false}
-    cstate(true,"CLOUD SYNCED");cmsg("Sincronizado · "+new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}));return true;
-  }
-  function scheduleCloudSave(){if(!cloudUser||cloudHydrating)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(cloudSaveNow,900)}
-  window.unknownCloudSchedule=scheduleCloudSave;
-  window.save=function(){localWrite();scheduleCloudSave()};
-  async function hydrateCloud(){
-    if(!cloudUser)return;
-    cloudHydrating=true;cstate(true,"CLOUD LOADING");cmsg("Cargando tu instancia...");
-    const {data,error}=await cloudClient.from("unknown_os_data").select("payload").eq("user_id",cloudUser.id).maybeSingle();
-    if(error){cloudHydrating=false;cstate(false,"CLOUD ERROR");cmsg("Revisa que la tabla y RLS estén configuradas.");return}
-    if(data&&data.payload){
-      const cloudData=data.payload||{};
-      const hasLocal=(Array.isArray(D.trades)&&D.trades.length)||D.checkin;
-      D=hasLocal?mergeCloud(D,cloudData):{checkin:null,trades:[],fundingPhase:1,...cloudData};
-      localWrite();render();
-      if(hasLocal)await cloudSaveNow();
-    }else if((D.trades&&D.trades.length)||D.checkin){
-      await cloudSaveNow();
-    }
-    cloudHydrating=false;cstate(true,"CLOUD SYNCED");cmsg("Instancia conectada · datos sincronizados.");
-  }
-  async function openSession(){
-    const {data}=await cloudClient.auth.getSession();
-    if(data&&data.session){cloudUser=data.session.user;document.getElementById("cloudUserEmail").textContent=cloudUser.email||"PRIVATE USER";document.getElementById("cloudUser").style.display="block";await hydrateCloud()}
-    else cstate(false,"CLOUD OFFLINE");
-  }
-  document.getElementById("cloudLaunch").onclick=()=>document.getElementById("cloudModal").classList.add("open");
-  document.getElementById("cloudClose").onclick=()=>document.getElementById("cloudModal").classList.remove("open");
-  document.getElementById("cloudModal").onclick=e=>{if(e.target.id==="cloudModal")e.currentTarget.classList.remove("open")};
-  document.getElementById("cloudSignIn").onclick=async()=>{
-    const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
-    if(!email||!password){cmsg("Escribe correo y contraseña.");return}
-    cmsg("Autenticando...");
-    const {data,error}=await cloudClient.auth.signInWithPassword({email,password});
-    if(error){cmsg(error.message);return}
-    cloudUser=data.user;document.getElementById("cloudUserEmail").textContent=email;document.getElementById("cloudUser").style.display="block";await hydrateCloud();
-  };
-  document.getElementById("cloudSignUp").onclick=async()=>{
-    const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
-    if(!email||password.length<6){cmsg("Usa un correo y una contraseña de mínimo 6 caracteres.");return}
-    cmsg("Creando cuenta...");
-    const {data,error}=await cloudClient.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});
-    if(error){cmsg(error.message);return}
-    if(!data.session){cmsg("Cuenta creada. Revisa tu correo para confirmar la cuenta y luego entra.");return}
-    cloudUser=data.user;document.getElementById("cloudUserEmail").textContent=email;document.getElementById("cloudUser").style.display="block";await hydrateCloud();
-  };
-  document.getElementById("cloudSyncNow").onclick=()=>cloudSaveNow();
-  document.getElementById("cloudSignOut").onclick=async()=>{await cloudClient.auth.signOut();cloudUser=null;cstate(false,"CLOUD OFFLINE");cmsg("Sesión cerrada. Tus datos locales siguen en este dispositivo.");document.getElementById("cloudUser").style.display="none"};
-  cloudClient.auth.onAuthStateChange(async(event,session)=>{
-    if(event==="SIGNED_IN"&&session&&!cloudUser){cloudUser=session.user;document.getElementById("cloudUserEmail").textContent=cloudUser.email||"PRIVATE USER";document.getElementById("cloudUser").style.display="block";await hydrateCloud()}
-    if(event==="SIGNED_OUT"){cloudUser=null;cstate(false,"CLOUD OFFLINE")}
-  });
-  openSession();
-})();
-</script></head>
+</head>
 <body>
 <div id="bootScreen" class="boot-screen">
   <div class="boot-noise"></div>
@@ -586,7 +509,84 @@ document.getElementById("reviewModal").onclick=e=>{if(e.target.id==="reviewModal
     <div id="cloudStatus" class="cloud-status"></div>
     <div id="cloudUser" class="cloud-user"><b id="cloudUserEmail">—</b><br><button id="cloudSyncNow" type="button">SYNC NOW</button> <button id="cloudSignOut" type="button">CERRAR SESIÓN</button></div>
   </div>
-</div></body></html>
+</div><script id="unknown-cloud-js">
+(function(){
+  const SUPABASE_URL="https://mlvewtibzfxjizehtdji.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY="sb_publishable_C6T6s78TJPD1lOtTBXX8Dg_2YwBRVwe";
+  const cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  let cloudUser=null,cloudTimer=null,cloudHydrating=false;
+  const localWrite=()=>localStorage.setItem(KEY,JSON.stringify(D));
+  const cmsg=x=>{const el=document.getElementById("cloudStatus");if(el)el.textContent=x||""};
+  const cstate=(on,label)=>{document.getElementById("cloudDot").classList.toggle("on",!!on);document.getElementById("cloudLabel").textContent=label};
+  const mergeCloud=(local,remote)=>{
+    const a=Array.isArray(local.trades)?local.trades:[],b=Array.isArray(remote.trades)?remote.trades:[];
+    const map=new Map();[...a,...b].forEach(t=>map.set(String(t.id),t));
+    const merged={...local,...remote,trades:[...map.values()].sort((x,y)=>Number(x.id)-Number(y.id))};
+    if(local.checkin && remote.checkin) merged.checkin=local.checkin;
+    else merged.checkin=local.checkin||remote.checkin||null;
+    merged.fundingPhase=Math.max(Number(local.fundingPhase||1),Number(remote.fundingPhase||1));
+    return merged;
+  };
+  async function cloudSaveNow(){
+    if(!cloudUser||cloudHydrating)return;
+    const payload=JSON.parse(JSON.stringify(D));
+    const {error}=await cloudClient.from("unknown_os_data").upsert({user_id:cloudUser.id,payload,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+    if(error){cstate(false,"CLOUD ERROR");cmsg("Cloud no disponible: "+error.message);return false}
+    cstate(true,"CLOUD SYNCED");cmsg("Sincronizado · "+new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}));return true;
+  }
+  function scheduleCloudSave(){if(!cloudUser||cloudHydrating)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(cloudSaveNow,900)}
+  window.unknownCloudSchedule=scheduleCloudSave;
+  window.save=function(){localWrite();scheduleCloudSave()};
+  async function hydrateCloud(){
+    if(!cloudUser)return;
+    cloudHydrating=true;cstate(true,"CLOUD LOADING");cmsg("Cargando tu instancia...");
+    const {data,error}=await cloudClient.from("unknown_os_data").select("payload").eq("user_id",cloudUser.id).maybeSingle();
+    if(error){cloudHydrating=false;cstate(false,"CLOUD ERROR");cmsg("Revisa que la tabla y RLS estén configuradas.");return}
+    if(data&&data.payload){
+      const cloudData=data.payload||{};
+      const hasLocal=(Array.isArray(D.trades)&&D.trades.length)||D.checkin;
+      D=hasLocal?mergeCloud(D,cloudData):{checkin:null,trades:[],fundingPhase:1,...cloudData};
+      localWrite();render();
+      if(hasLocal)await cloudSaveNow();
+    }else if((D.trades&&D.trades.length)||D.checkin){
+      await cloudSaveNow();
+    }
+    cloudHydrating=false;cstate(true,"CLOUD SYNCED");cmsg("Instancia conectada · datos sincronizados.");
+  }
+  async function openSession(){
+    const {data}=await cloudClient.auth.getSession();
+    if(data&&data.session){cloudUser=data.session.user;document.getElementById("cloudUserEmail").textContent=cloudUser.email||"PRIVATE USER";document.getElementById("cloudUser").style.display="block";await hydrateCloud()}
+    else cstate(false,"CLOUD OFFLINE");
+  }
+  document.getElementById("cloudLaunch").onclick=()=>document.getElementById("cloudModal").classList.add("open");
+  document.getElementById("cloudClose").onclick=()=>document.getElementById("cloudModal").classList.remove("open");
+  document.getElementById("cloudModal").onclick=e=>{if(e.target.id==="cloudModal")e.currentTarget.classList.remove("open")};
+  document.getElementById("cloudSignIn").onclick=async()=>{
+    const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
+    if(!email||!password){cmsg("Escribe correo y contraseña.");return}
+    cmsg("Autenticando...");
+    const {data,error}=await cloudClient.auth.signInWithPassword({email,password});
+    if(error){cmsg(error.message);return}
+    cloudUser=data.user;document.getElementById("cloudUserEmail").textContent=email;document.getElementById("cloudUser").style.display="block";await hydrateCloud();
+  };
+  document.getElementById("cloudSignUp").onclick=async()=>{
+    const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
+    if(!email||password.length<6){cmsg("Usa un correo y una contraseña de mínimo 6 caracteres.");return}
+    cmsg("Creando cuenta...");
+    const {data,error}=await cloudClient.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});
+    if(error){cmsg(error.message);return}
+    if(!data.session){cmsg("Cuenta creada. Revisa tu correo para confirmar la cuenta y luego entra.");return}
+    cloudUser=data.user;document.getElementById("cloudUserEmail").textContent=email;document.getElementById("cloudUser").style.display="block";await hydrateCloud();
+  };
+  document.getElementById("cloudSyncNow").onclick=()=>cloudSaveNow();
+  document.getElementById("cloudSignOut").onclick=async()=>{await cloudClient.auth.signOut();cloudUser=null;cstate(false,"CLOUD OFFLINE");cmsg("Sesión cerrada. Tus datos locales siguen en este dispositivo.");document.getElementById("cloudUser").style.display="none"};
+  cloudClient.auth.onAuthStateChange(async(event,session)=>{
+    if(event==="SIGNED_IN"&&session&&!cloudUser){cloudUser=session.user;document.getElementById("cloudUserEmail").textContent=cloudUser.email||"PRIVATE USER";document.getElementById("cloudUser").style.display="block";await hydrateCloud()}
+    if(event==="SIGNED_OUT"){cloudUser=null;cstate(false,"CLOUD OFFLINE")}
+  });
+  openSession();
+})();
+</script></body></html>
 <style>
 .nav button.active{box-shadow:inset 2px 0 #f2f2f2}
 .mark{box-shadow:0 0 22px rgba(22,140,255,.08)}
