@@ -152,7 +152,93 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 .quality-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:15px}.quality-card{border:1px solid #2a3339;padding:15px;display:flex;flex-direction:column;gap:5px;min-height:160px}.quality-card b{font-size:18px;letter-spacing:.1em}.quality-card span{font-size:8px;color:#7b8992;letter-spacing:.15em}.quality-card small{font-size:10px;color:#9aa6ad;line-height:1.5;margin-top:6px}.quality-card em{font-style:normal;font-size:7px;letter-spacing:.18em;margin-top:auto}.quality-card.alpha{border-color:#727c82}.quality-card.alpha em{color:#fff}.quality-card.beta em{color:#aaa}.quality-card.gamma{opacity:.72}.quality-card.gamma em{color:#777}.risk-table{margin-top:15px;border:1px solid #202a31}.risk-table>div{display:grid;grid-template-columns:1fr .8fr 1.5fr;gap:8px;padding:10px;border-bottom:1px solid #202a31;font-size:9px;align-items:center}.risk-table>div:last-child{border-bottom:0}.risk-table>div:first-child{color:#66747d;font-size:7px;letter-spacing:.16em}.risk-table b{font-size:9px}.risk-table span:last-child{color:#7e8b93}.risk-note{display:block;color:#626f77;font-size:8px;line-height:1.5;margin-top:10px}.protocol-lower{margin-top:18px}.buffer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}.buffer-grid>div{border:1px solid #202a31;padding:13px}.buffer-grid small{display:block;color:#66747d;font-size:7px;letter-spacing:.15em}.buffer-grid b{display:block;font-size:20px;margin-top:5px}.kill-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}.kill-grid>div{border:1px solid #202a31;padding:13px}.kill-grid b{display:block;font-size:20px}.kill-grid span{display:block;color:#66747d;font-size:7px;letter-spacing:.12em;margin-top:4px}.kill-message{border:1px solid #333;padding:11px;margin-top:9px;font-size:9px;color:#929da4;line-height:1.5}.weekly-card{margin-top:18px}.weekly-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:15px}.weekly-grid>div{border:1px solid #202a31;padding:13px;min-height:100px}.weekly-grid b{font-size:9px;letter-spacing:.12em}.weekly-grid span{display:block;color:#818d94;font-size:9px;line-height:1.5;margin-top:9px}.protocol-quote{margin-top:18px}.watch-active #dailyLockState{color:#fff}.trade .formgrid label:last-child select{min-width:150px}
 @media(max-width:900px){.protocol-grid{grid-template-columns:1fr}.quality-grid,.weekly-grid{grid-template-columns:1fr}.kill-grid{grid-template-columns:1fr}.risk-table>div{grid-template-columns:1fr}.buffer-grid{grid-template-columns:1fr}}
 </style>
-</head>
+
+<style id="unknown-cloud-css">
+.cloud-launch{position:fixed;right:16px;bottom:16px;z-index:80;border:1px solid #303b43;background:rgba(8,8,8,.94);color:#ddd;border-radius:9px;padding:9px 11px;font:700 8px ui-monospace,Consolas,monospace;letter-spacing:.14em;cursor:pointer;backdrop-filter:blur(10px)}
+.cloud-launch:hover{border-color:#777}.cloud-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#777;margin-right:7px;box-shadow:0 0 8px #888}.cloud-dot.on{background:#fff;box-shadow:0 0 12px #fff}
+.cloud-modal{display:none;position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.78);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:18px}
+.cloud-modal.open{display:flex}.cloud-panel{width:min(430px,94vw);background:#090909;border:1px solid #303030;border-radius:14px;padding:22px;box-shadow:0 25px 100px rgba(0,0,0,.7)}
+.cloud-panel h2{margin:7px 0 5px;font-size:23px;letter-spacing:-.05em}.cloud-panel p{font-size:9px;line-height:1.55;color:#727272;margin:0 0 17px}.cloud-panel input{width:100%;margin-top:8px;background:#050505;border:1px solid #292929;color:#eee;border-radius:7px;padding:11px;outline:none}.cloud-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:13px}.cloud-actions button{border:1px solid #333;background:#111;color:#ddd;border-radius:7px;padding:10px;font-size:8px;font-weight:800;letter-spacing:.1em;cursor:pointer}.cloud-actions .primary{background:#eee;color:#050505}.cloud-status{margin-top:12px;min-height:15px;color:#777;font-size:8px}.cloud-user{display:none;border-top:1px solid #222;margin-top:15px;padding-top:14px}.cloud-user b{font-size:9px}.cloud-user button{margin-top:10px;border:1px solid #333;background:#111;color:#aaa;border-radius:6px;padding:8px;font-size:7px;cursor:pointer}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script id="unknown-cloud-js">
+(function(){
+  const SUPABASE_URL="https://mlvewtibzfxjizehtdji.supabase.co";
+  const SUPABASE_PUBLISHABLE_KEY="sb_publishable_C6T6s78TJPD1lOtTBXX8Dg_2YwBRVwe";
+  const cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+  let cloudUser=null,cloudTimer=null,cloudHydrating=false;
+  const localWrite=()=>localStorage.setItem(KEY,JSON.stringify(D));
+  const cmsg=x=>{const el=document.getElementById("cloudStatus");if(el)el.textContent=x||""};
+  const cstate=(on,label)=>{document.getElementById("cloudDot").classList.toggle("on",!!on);document.getElementById("cloudLabel").textContent=label};
+  const mergeCloud=(local,remote)=>{
+    const a=Array.isArray(local.trades)?local.trades:[],b=Array.isArray(remote.trades)?remote.trades:[];
+    const map=new Map();[...a,...b].forEach(t=>map.set(String(t.id),t));
+    const merged={...local,...remote,trades:[...map.values()].sort((x,y)=>Number(x.id)-Number(y.id))};
+    if(local.checkin && remote.checkin) merged.checkin=local.checkin;
+    else merged.checkin=local.checkin||remote.checkin||null;
+    merged.fundingPhase=Math.max(Number(local.fundingPhase||1),Number(remote.fundingPhase||1));
+    return merged;
+  };
+  async function cloudSaveNow(){
+    if(!cloudUser||cloudHydrating)return;
+    const payload=JSON.parse(JSON.stringify(D));
+    const {error}=await cloudClient.from("unknown_os_data").upsert({user_id:cloudUser.id,payload,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+    if(error){cstate(false,"CLOUD ERROR");cmsg("Cloud no disponible: "+error.message);return false}
+    cstate(true,"CLOUD SYNCED");cmsg("Sincronizado · "+new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}));return true;
+  }
+  function scheduleCloudSave(){if(!cloudUser||cloudHydrating)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(cloudSaveNow,900)}
+  window.unknownCloudSchedule=scheduleCloudSave;
+  window.save=function(){localWrite();scheduleCloudSave()};
+  async function hydrateCloud(){
+    if(!cloudUser)return;
+    cloudHydrating=true;cstate(true,"CLOUD LOADING");cmsg("Cargando tu instancia...");
+    const {data,error}=await cloudClient.from("unknown_os_data").select("payload").eq("user_id",cloudUser.id).maybeSingle();
+    if(error){cloudHydrating=false;cstate(false,"CLOUD ERROR");cmsg("Revisa que la tabla y RLS estén configuradas.");return}
+    if(data&&data.payload){
+      const cloudData=data.payload||{};
+      const hasLocal=(Array.isArray(D.trades)&&D.trades.length)||D.checkin;
+      D=hasLocal?mergeCloud(D,cloudData):{checkin:null,trades:[],fundingPhase:1,...cloudData};
+      localWrite();render();
+      if(hasLocal)await cloudSaveNow();
+    }else if((D.trades&&D.trades.length)||D.checkin){
+      await cloudSaveNow();
+    }
+    cloudHydrating=false;cstate(true,"CLOUD SYNCED");cmsg("Instancia conectada · datos sincronizados.");
+  }
+  async function openSession(){
+    const {data}=await cloudClient.auth.getSession();
+    if(data&&data.session){cloudUser=data.session.user;document.getElementById("cloudUserEmail").textContent=cloudUser.email||"PRIVATE USER";document.getElementById("cloudUser").style.display="block";await hydrateCloud()}
+    else cstate(false,"CLOUD OFFLINE");
+  }
+  document.getElementById("cloudLaunch").onclick=()=>document.getElementById("cloudModal").classList.add("open");
+  document.getElementById("cloudClose").onclick=()=>document.getElementById("cloudModal").classList.remove("open");
+  document.getElementById("cloudModal").onclick=e=>{if(e.target.id==="cloudModal")e.currentTarget.classList.remove("open")};
+  document.getElementById("cloudSignIn").onclick=async()=>{
+    const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
+    if(!email||!password){cmsg("Escribe correo y contraseña.");return}
+    cmsg("Autenticando...");
+    const {data,error}=await cloudClient.auth.signInWithPassword({email,password});
+    if(error){cmsg(error.message);return}
+    cloudUser=data.user;document.getElementById("cloudUserEmail").textContent=email;document.getElementById("cloudUser").style.display="block";await hydrateCloud();
+  };
+  document.getElementById("cloudSignUp").onclick=async()=>{
+    const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
+    if(!email||password.length<6){cmsg("Usa un correo y una contraseña de mínimo 6 caracteres.");return}
+    cmsg("Creando cuenta...");
+    const {data,error}=await cloudClient.auth.signUp({email,password,options:{emailRedirectTo:location.origin+location.pathname}});
+    if(error){cmsg(error.message);return}
+    if(!data.session){cmsg("Cuenta creada. Revisa tu correo para confirmar la cuenta y luego entra.");return}
+    cloudUser=data.user;document.getElementById("cloudUserEmail").textContent=email;document.getElementById("cloudUser").style.display="block";await hydrateCloud();
+  };
+  document.getElementById("cloudSyncNow").onclick=()=>cloudSaveNow();
+  document.getElementById("cloudSignOut").onclick=async()=>{await cloudClient.auth.signOut();cloudUser=null;cstate(false,"CLOUD OFFLINE");cmsg("Sesión cerrada. Tus datos locales siguen en este dispositivo.");document.getElementById("cloudUser").style.display="none"};
+  cloudClient.auth.onAuthStateChange(async(event,session)=>{
+    if(event==="SIGNED_IN"&&session&&!cloudUser){cloudUser=session.user;document.getElementById("cloudUserEmail").textContent=cloudUser.email||"PRIVATE USER";document.getElementById("cloudUser").style.display="block";await hydrateCloud()}
+    if(event==="SIGNED_OUT"){cloudUser=null;cstate(false,"CLOUD OFFLINE")}
+  });
+  openSession();
+})();
+</script></head>
 <body>
 <div id="bootScreen" class="boot-screen">
   <div class="boot-noise"></div>
@@ -197,8 +283,7 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 <main>
 <header class="top"><div><div class="crumb">TRADINGOS / <b id="crumb">RESUMEN</b></div><h1 id="title">Centro de control</h1></div><div class="time"><b id="clock">--:--</b><small id="date">---</small><span class="time-watch" id="timeWatch"><i></i><b id="timeWatchState">WATCH STANDBY</b><small id="timeWatchHint">21:00 — 01:00</small></span></div></header>
 
-<section class="page active" id="dashboard">
-<div class="unknown-tag">// IDENTITY UNKNOWN · SYSTEM ONLINE · PRIVATE INSTANCE</div>
+<section class="page active" id="dashboard"><div class="unknown-tag">// IDENTITY UNKNOWN · SYSTEM ONLINE · PRIVATE INSTANCE</div>
   <div class="hero">
     <div class="hero-left">
       <div class="eyebrow">ESTADO PSICOLÓGICO ACTUAL</div>
@@ -370,7 +455,7 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 </main></div>
 
 <script>
-const KEY="UNKNOWN OS_V3";let D=load();function load(){try{return JSON.parse(localStorage.getItem(KEY))||{checkin:null,trades:[],fundingPhase:1}}catch{return{checkin:null,trades:[],fundingPhase:1}}}function save(){localStorage.setItem(KEY,JSON.stringify(D))}
+const KEY="UNKNOWN OS_V3";let D=load();function load(){try{return JSON.parse(localStorage.getItem(KEY))||{checkin:null,trades:[],fundingPhase:1}}catch{return{checkin:null,trades:[],fundingPhase:1}}}function save(){localStorage.setItem(KEY,JSON.stringify(D));if(window.unknownCloudSchedule)window.unknownCloudSchedule()}
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s),day=()=>new Date().toISOString().slice(0,10);
 function today(){return D.trades.filter(t=>t.date===day())}function loss(){let n=0;for(const t of today().slice().reverse()){if(t.result==="loss")n++;else break}return n}
 function pnl(){return today().reduce((a,t)=>a+Number(t.pnl||0),0)}function dd(){let p=0,c=0,d=0;today().forEach(t=>{c+=t.pnl;p=Math.max(p,c);d=Math.min(d,c-p)});return d}
@@ -397,8 +482,7 @@ $$(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.page));$$("[data-go]").f
 $$('.yn').forEach(g=>{g.dataset.value='';g.querySelectorAll('button').forEach(x=>x.className='');g.onclick=e=>{if(e.target.tagName!=='BUTTON')return;g.dataset.value=e.target.textContent==='YES'?'true':'false';g.querySelectorAll('button').forEach(x=>x.className='');e.target.className=e.target.textContent==='YES'?'yes':'no'}});
 function flag(name,positive=false){let v=$('[data-f="'+name+'"]').dataset.value;if(v==='')return null;return v==='true'}
 function buildCheckin(){return{stress:+$('#stress').value,anxiety:+$('#anxiety').value,energy:+$('#energy').value,confidence:+$('#confidence').value,urgency:+$('#urgency').value,recover:flag('recover'),fomo:flag('fomo'),stable:flag('stable'),ruleBreak:flag('ruleBreak'),sleepDebt:flag('sleepDebt'),distracted:flag('distracted'),acceptLoss:flag('acceptLoss'),prove:flag('prove'),tension:flag('tension'),clearPlan:flag('clearPlan'),revenge:flag('revenge')}}
-function checkinComplete(c){return c && ['recover','fomo','stable','ruleBreak','sleepDebt','distracted','acceptLoss','prove','tension','clearPlan','revenge'].every(k=>c[k]!==null)}
-function mentalAdvice(){let c=D.checkin,s=score();if(!c||s===null)return{level:"EN ESPERA",title:"Primero evalúa tu estado.",text:"El sistema convertirá tus respuestas en una recomendación concreta antes de autorizar riesgo.",actions:[]};let [st]=state(),acts=[];if(c.recover)acts.push(["No busques recuperar hoy","danger"]);if(c.revenge)acts.push(["Corta la sesión","danger"]);if(c.acceptLoss===false)acts.push(["Acepta el riesgo antes de entrar","danger"]);if(c.clearPlan===false)acts.push(["Define el gatillo exacto","warn"]);if(c.sleepDebt===false)acts.push(["Descansa antes de operar","warn"]);if(c.distracted)acts.push(["Resuelve / aparta la distracción","warn"]);if(c.fomo)acts.push(["Deja pasar la entrada si se va","warn"]);if(c.prove)acts.push(["No necesitas tener razón","warn"]);if(c.tension)acts.push(["Respira y baja activación","warn"]);if(!acts.length)acts.push(["Ejecuta solo tu plan","good"],["Acepta terminar en 0 trades","good"]);if(st==="BLOQUEADO")return{level:"NO OPERAR",title:"Tu estado necesita distancia del mercado.",text:"No intentes cambiar esta lectura buscando una entrada. El mejor movimiento ahora es salir de la ejecución y volver cuando recuperes estabilidad.",actions:acts};if(st==="PAUSAR")return{level:"PAUSA",title:"Reduce activación antes de decidir.",text:"Haz una pausa de 10–15 minutos, aléjate del gráfico y vuelve a evaluar. Si el estado no mejora, termina la sesión.",actions:acts};if(st==="PRECAUCIÓN")return{level:"RIESGO REDUCIDO",title:"Observa más de lo que ejecutas.",text:"Tu estado permite seguir mirando, pero no necesitas demostrar nada. Solo toma un setup excepcional y respeta el riesgo reducido.",actions:acts};if(st==="ÓPTIMO")return{level:"HASTA 1% AUTORIZADO",title:"Tu estado está en rango óptimo.",text:"Mentalmente estás en condiciones de asumir hasta 1% de riesgo. Eso no obliga a usarlo: la calidad del setup, el drawdown y las reglas de la cuenta siguen teniendo prioridad.",actions:acts.concat([["1% solo si el setup y el riesgo de cuenta lo justifican","good"]])};return{level:"MENTALMENTE APTO",title:"Tu estado está dentro de parámetros.",text:"No confundas estar bien con estar obligado a operar. Espera una oportunidad que cumpla tu protocolo completo.",actions:acts}}
+function checkinComplete(c){return c && ['recover','fomo','stable','ruleBreak','sleepDebt','distracted','acceptLoss','prove','tension','clearPlan','revenge'].every(k=>c[k]!==null)}function mentalAdvice(){let c=D.checkin,s=score();if(!c||s===null)return{level:"EN ESPERA",title:"Primero evalúa tu estado.",text:"El sistema convertirá tus respuestas en una recomendación concreta antes de autorizar riesgo.",actions:[]};let [st]=state(),acts=[];if(c.recover)acts.push(["No busques recuperar hoy","danger"]);if(c.revenge)acts.push(["Corta la sesión","danger"]);if(c.acceptLoss===false)acts.push(["Acepta el riesgo antes de entrar","danger"]);if(c.clearPlan===false)acts.push(["Define el gatillo exacto","warn"]);if(c.sleepDebt===false)acts.push(["Descansa antes de operar","warn"]);if(c.distracted)acts.push(["Resuelve / aparta la distracción","warn"]);if(c.fomo)acts.push(["Deja pasar la entrada si se va","warn"]);if(c.prove)acts.push(["No necesitas tener razón","warn"]);if(c.tension)acts.push(["Respira y baja activación","warn"]);if(!acts.length)acts.push(["Ejecuta solo tu plan","good"],["Acepta terminar en 0 trades","good"]);if(st==="BLOQUEADO")return{level:"NO OPERAR",title:"Tu estado necesita distancia del mercado.",text:"No intentes cambiar esta lectura buscando una entrada. El mejor movimiento ahora es salir de la ejecución y volver cuando recuperes estabilidad.",actions:acts};if(st==="PAUSAR")return{level:"PAUSA",title:"Reduce activación antes de decidir.",text:"Haz una pausa de 10–15 minutos, aléjate del gráfico y vuelve a evaluar. Si el estado no mejora, termina la sesión.",actions:acts};if(st==="PRECAUCIÓN")return{level:"RIESGO REDUCIDO",title:"Observa más de lo que ejecutas.",text:"Tu estado permite seguir mirando, pero no necesitas demostrar nada. Solo toma un setup excepcional y respeta el riesgo reducido.",actions:acts};if(st==="ÓPTIMO")return{level:"HASTA 1% AUTORIZADO",title:"Tu estado está en rango óptimo.",text:"Mentalmente estás en condiciones de asumir hasta 1% de riesgo. Eso no obliga a usarlo: la calidad del setup, el drawdown y las reglas de la cuenta siguen teniendo prioridad.",actions:acts.concat([["1% solo si el setup y el riesgo de cuenta lo justifican","good"]])};return{level:"MENTALMENTE APTO",title:"Tu estado está dentro de parámetros.",text:"No confundas estar bien con estar obligado a operar. Espera una oportunidad que cumpla tu protocolo completo.",actions:acts}}
 function renderAdvice(){let a=mentalAdvice();$("#adviceLevel").textContent=a.level;$("#adviceTitle").textContent=a.title;$("#adviceText").textContent=a.text;$("#adviceActions").innerHTML=a.actions.map(x=>`<span class="${x[1]}">${x[0]}</span>`).join("")}
 $("#saveCheck").onclick=()=>{let c=buildCheckin();if(!checkinComplete(c)){alert("Completa todas las preguntas YES / NO antes de calcular tu estado.");return;}D.checkin=c;save();render();renderAdvice();};
 let pendingImage="";
@@ -485,7 +569,24 @@ function reviewTrade(id){
 document.getElementById("closeReview").onclick=()=>document.getElementById("reviewModal").classList.remove("open");
 document.getElementById("reviewModal").onclick=e=>{if(e.target.id==="reviewModal")e.currentTarget.classList.remove("open")};
 </script>
-</body></html>
+
+<button id="cloudLaunch" class="cloud-launch" type="button"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">CLOUD OFFLINE</span></button>
+<div id="cloudModal" class="cloud-modal">
+  <div class="cloud-panel">
+    <button id="cloudClose" type="button" style="float:right;border:1px solid #333;background:#111;color:#aaa;border-radius:6px;width:30px;height:30px;cursor:pointer">×</button>
+    <div class="eyebrow">UNKNOWN OS / CLOUD SYNC</div>
+    <h2>Private instance</h2>
+    <p>Inicia sesión para sincronizar trades, check-ins, estadísticas y respaldos entre tus dispositivos. Tu contraseña nunca se guarda en UNKNOWN OS.</p>
+    <input id="cloudEmail" type="email" autocomplete="email" placeholder="Correo">
+    <input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Contraseña">
+    <div class="cloud-actions">
+      <button id="cloudSignIn" class="primary" type="button">ENTRAR</button>
+      <button id="cloudSignUp" type="button">CREAR CUENTA</button>
+    </div>
+    <div id="cloudStatus" class="cloud-status"></div>
+    <div id="cloudUser" class="cloud-user"><b id="cloudUserEmail">—</b><br><button id="cloudSyncNow" type="button">SYNC NOW</button> <button id="cloudSignOut" type="button">CERRAR SESIÓN</button></div>
+  </div>
+</div></body></html>
 <style>
 .nav button.active{box-shadow:inset 2px 0 #f2f2f2}
 .mark{box-shadow:0 0 22px rgba(22,140,255,.08)}
