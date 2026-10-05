@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UNKNOWN OS — Centro de control</title>
+
+<style>
+/* UNKNOWN OS — DARK TRADER IDENTITY */
+body{background:#020202;color:#ededed;overflow-x:hidden}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
+.candle-scene{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;opacity:.20;filter:blur(.15px)}
+.app{position:relative;z-index:2}
+.pattern{position:absolute;bottom:-120px;display:flex;align-items:flex-end;gap:7px;opacity:0;animation:patternRise 22s linear infinite;transform-origin:center bottom}
+.pattern .candle{position:relative;width:9px;height:100px;display:block;opacity:1;flex:0 0 9px}
+.candle b{display:block;position:absolute;left:0;bottom:var(--body-bottom,22px);width:100%;height:var(--h,42px);background:#e9e9e9;box-shadow:0 0 12px rgba(255,255,255,.08)}
+.candle:before,.candle:after{content:"";position:absolute;left:50%;transform:translateX(-50%);width:1px;background:#aaa}
+.candle:before{height:var(--wick,28px);top:0}
+.candle:after{height:var(--wick2,22px);bottom:0}
+.candle.down b{background:#303030;border:1px solid #555}
+.candle.up{--h:54px;--wick:20px;--wick2:22px;--body-bottom:18px}
+.candle.down{--h:36px;--wick:24px;--wick2:27px;--body-bottom:28px}
+.candle.doji{--h:5px;--wick:42px;--wick2:38px;--body-bottom:47px}.candle.doji b{background:#aaa;height:4px}
+.candle.hammer{--h:26px;--wick:10px;--wick2:56px;--body-bottom:38px}.candle.hammer b{background:#e9e9e9}
+.candle.shooting{--h:25px;--wick:58px;--wick2:10px;--body-bottom:12px}.candle.shooting b{background:#303030;border:1px solid #555}
+.p1{left:7%;animation-delay:-2s;transform:scale(.85)}.p2{left:24%;animation-delay:-12s;transform:scale(.72)}.p3{left:40%;animation-delay:-7s;transform:scale(.95)}.p4{left:57%;animation-delay:-17s;transform:scale(.65)}.p5{left:69%;animation-delay:-5s;transform:scale(.78)}.p6{left:81%;animation-delay:-14s;transform:scale(.9)}.p7{left:91%;animation-delay:-9s;transform:scale(.66)}
+@keyframes patternRise{0%{transform:translateY(0) translateX(0) rotate(-1deg);opacity:0}8%{opacity:.8}25%{transform:translateY(-25vh) translateX(8px) rotate(1deg);opacity:.5}55%{transform:translateY(-65vh) translateX(-10px) rotate(-1deg);opacity:.25}90%{opacity:.07}100%{transform:translateY(-125vh) translateX(14px) rotate(2deg);opacity:0}}
+.scanline{position:absolute;left:0;right:0;height:1px;background:rgba(255,255,255,.07);box-shadow:0 0 18px rgba(255,255,255,.08);animation:scan 8s linear infinite}
+@keyframes scan{0%{top:-5%}100%{top:105%}}
+.sidebar{background:rgba(3,3,3,.94);border-right-color:#222}
+.brand .mark{border-color:#4a4a4a;background:#090909;box-shadow:0 0 30px rgba(255,255,255,.04)}
+.brand b{letter-spacing:.02em}
+.top h1{letter-spacing:.08em;text-transform:uppercase}
+.hero{background:radial-gradient(circle at 80% 40%,rgba(255,255,255,.055),transparent 25%),linear-gradient(135deg,#111,#050505 70%);border-color:#333;box-shadow:0 0 50px rgba(0,0,0,.4)}
+.hero:after{border-color:#2b2b2b}
+.state h2{letter-spacing:.08em;text-shadow:0 0 22px rgba(255,255,255,.12)}
+.badge{color:#ddd!important;border-color:#414141;background:#0b0b0b}
+.gauge{background:conic-gradient(#eee 0deg,#252525 0deg)!important;box-shadow:0 0 50px rgba(255,255,255,.05)}
+.gauge:before{background:#070707;border-color:#333}
+.btn.primary{background:#f2f2f2!important;color:#050505!important;border-color:#f2f2f2!important;box-shadow:0 0 25px rgba(255,255,255,.08)}
+.btn.primary:hover{background:#fff!important}
+.nav button.active{box-shadow:inset 2px 0 #eee;background:#171717;border-color:#2b2b2b}
+.nav button.active span{color:#eee}
+input[type=range]{accent-color:#eee}
+.track span{background:#eee}
+.upload-icon{color:#eee}
+.photo-drop.drag{border-color:#eee;background:#151515}
+.kpi,.card{background:rgba(9,9,9,.88);border-color:#222}
+.card,.kpi,.hero,.result,.lock{backdrop-filter:blur(8px)}
+.card h3,.page h2{letter-spacing:-.035em}
+.eyebrow,.section,.crumb{color:#777}
+.bottom span{color:#666}
+.sidefoot i{background:#eee;box-shadow:0 0 12px rgba(255,255,255,.3)}
+.delete-trade{border-color:#444;background:#111;color:#aaa}
+.delete-trade:hover{border-color:#aaa;background:#1b1b1b;color:#fff}
+.trade-thumb{filter:grayscale(1)}
+/* mysterious status pulse */
+.state-line:after{content:"";width:5px;height:5px;border-radius:50%;background:#ddd;box-shadow:0 0 13px #fff;animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.4)}}
+.unknown-tag{font-family:ui-monospace,Consolas,monospace;font-size:7px;letter-spacing:.2em;color:#555;margin:-9px 0 13px;animation:flicker 5s infinite}@keyframes flicker{0%,92%,100%{opacity:1}94%{opacity:.35}96%{opacity:.8}}
+.quote-card{position:relative;min-height:150px;overflow:hidden}.quote-card:after{content:"UNKNOWN";position:absolute;right:-8px;bottom:-25px;font-size:58px;font-weight:950;letter-spacing:-.08em;color:#151515;pointer-events:none}.quote-mark{font-family:Georgia,serif;font-size:48px;line-height:.7;color:#777;margin:4px 0 5px}.quote-card h3{max-width:560px;font-size:17px;line-height:1.25;letter-spacing:-.035em;margin:0;position:relative;z-index:1}.quote-line{height:1px;width:48px;background:#777;margin:14px 0 8px}.quote-card small{font-size:7px;color:#555;letter-spacing:.2em}
+.watch-status{display:flex;align-items:center;gap:8px;margin-top:17px;font-family:ui-monospace,Consolas,monospace}.watch-status b{font-size:8px;letter-spacing:.13em}.watch-status small{color:#555;font-size:7px;letter-spacing:.12em}.watch-dot{width:5px;height:5px;border-radius:50%;background:#777;box-shadow:0 0 10px #aaa}.watch-active .watch-dot{background:#fff;box-shadow:0 0 14px #fff;animation:pulse 1.5s infinite}
+</style>
+<style>
+:root{--bg:#030303;--panel:#090909;--panel2:#101010;--line:#242424;--text:#f4f4f4;--muted:#858585;--dim:#4b4b4b;--lime:#f2f2f2;--green:#f4f4f4;--red:#8d8d8d;--orange:#bdbdbd;--blue:#ffffff}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#05070a;color:var(--text);
+font-family:Inter,Segoe UI,Arial,sans-serif}body{overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;
+background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+background-size:42px 42px;mask-image:linear-gradient(to bottom,#000,transparent 80%)}
+.app{display:flex;min-height:100vh}.sidebar{width:245px;position:fixed;inset:0 auto 0 0;background:rgba(5,8,11,.93);
+border-right:1px solid var(--line);padding:22px 15px;display:flex;flex-direction:column;z-index:5;backdrop-filter:blur(15px)}
+.brand{display:flex;gap:10px;align-items:center;padding:6px 9px 27px}.mark{width:37px;height:37px;border:1px solid #42515b;
+background:linear-gradient(135deg,#182119,#090d10);border-radius:10px;display:grid;place-items:center;font-weight:950;letter-spacing:-2px}
+.brand b{font-size:14px}.brand small{display:block;font-size:7px;color:#52616b;letter-spacing:.2em;margin-top:3px}
+.user{border:1px solid var(--line);background:#090d11;border-radius:11px;padding:10px;display:flex;align-items:center;gap:9px;margin-bottom:25px}
+.avatar{width:29px;height:29px;border-radius:50%;background:#1b252c;display:grid;place-items:center;font-size:10px;font-weight:800}
+.user b{font-size:8px;letter-spacing:.16em}.user small{display:block;color:#55636d;font-size:7px;margin-top:3px}.online{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
+.nav{display:grid;gap:4px}.nav button{border:1px solid transparent;background:transparent;color:#66747e;height:43px;border-radius:9px;text-align:left;padding:0 12px;cursor:pointer;font-size:10px;transition:.2s}
+.nav button span{display:inline-block;width:25px;color:#394650;font-size:8px}.nav button:hover{background:#0e151a;color:#dbe3e8}.nav button.active{background:#141c22;border-color:#202c34;color:#fff;box-shadow:inset 2px 0 var(--lime)}.nav button.active span{color:var(--lime)}
+.sidefoot{margin-top:auto;border-top:1px solid var(--line);padding:16px 6px;display:flex;gap:8px;align-items:center}.sidefoot i{width:7px;height:7px;border-radius:50%;background:var(--lime)}
+.sidefoot b{font-size:7px;letter-spacing:.17em}.sidefoot small{display:block;color:#4f5c66;font-size:8px;margin-top:3px}
+main{margin-left:245px;width:calc(100% - 245px);padding:27px 35px 70px;max-width:1500px}.top{height:65px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.crumb{font-size:7px;color:#50606b;letter-spacing:.22em}.crumb b{color:#8c9aa4}.top h1{font-size:24px;margin:6px 0 0;letter-spacing:-.05em}.time{text-align:right}.time b{display:block;font-size:15px}.time small{color:#56646e;font-size:8px}
+.page{display:none}.page.active{display:block}.intro{margin:4px 0 23px}.intro small{color:#5f707a;font-size:8px;letter-spacing:.2em}.intro h2{font-size:30px;letter-spacing:-.06em;margin:7px 0}.intro p{font-size:11px;color:#697781;max-width:700px;line-height:1.65}
+.hero{position:relative;overflow:hidden;border:1px solid #26333b;border-radius:17px;min-height:285px;background:
+radial-gradient(circle at 82% 45%,rgba(22,140,255,.12),transparent 25%),linear-gradient(135deg,#10171a,#080c10 65%);
+display:grid;grid-template-columns:1fr 280px}.hero:after{content:"";position:absolute;inset:-80px -100px auto auto;width:430px;height:430px;border:1px solid #2a2a2a;border-radius:50%;box-shadow:0 0 0 32px rgba(22,140,255,.018),0 0 0 70px rgba(22,140,255,.012)}
+.hero-left{padding:29px;position:relative;z-index:2}.eyebrow{font-size:7px;color:#61717c;letter-spacing:.2em}.state{display:flex;align-items:center;gap:11px;margin:13px 0 7px}.state h2{font-size:40px;letter-spacing:-.07em;margin:0}.badge{font-size:7px;letter-spacing:.13em;border:1px solid #33423a;color:var(--green);padding:6px 8px;border-radius:99px}
+.hero-left p{color:#74838c;font-size:11px;max-width:600px}.hero-actions{display:flex;align-items:end;gap:35px;margin-top:29px;padding-top:17px;border-top:1px solid #202b32}.metric strong{display:block;font-size:21px;margin-top:4px}.metric small{font-size:7px;color:#55646e;letter-spacing:.15em}
+.btn{border:1px solid #334049;background:#141c21;color:#e6edf1;border-radius:7px;padding:11px 14px;font-size:8px;font-weight:850;letter-spacing:.1em;cursor:pointer}.btn:hover{border-color:#62717a}.btn.primary{background:var(--lime);color:#070a06;border-color:var(--lime)}
+.radar{display:grid;place-items:center;position:relative;z-index:2}.gauge{width:175px;height:175px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--lime) 0deg,#1c262c 0deg);position:relative}
+.gauge:before{content:"";position:absolute;inset:10px;border-radius:50%;background:#0a0f12;border:1px solid #1d282e}.gauge-content{position:relative;text-align:center}.gauge-content b{font-size:42px;letter-spacing:-.07em}.gauge-content span{font-size:8px;color:#596873;display:block;margin-top:-3px}.radar>small{margin-top:12px;color:#53616b;font-size:7px;letter-spacing:.2em}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin:9px 0}.kpi{border:1px solid var(--line);background:rgba(10,14,18,.92);border-radius:10px;padding:16px;position:relative;overflow:hidden}.kpi:after{content:"";position:absolute;right:-15px;bottom:-25px;width:80px;height:80px;border-radius:50%;border:1px solid #1c282f}.kpi small{font-size:7px;letter-spacing:.17em;color:#53626d}.kpi b{display:block;font-size:22px;margin:9px 0 2px;letter-spacing:-.04em}.kpi span{font-size:8px;color:#4e5d67}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.card{background:rgba(10,14,18,.9);border:1px solid var(--line);border-radius:12px;padding:20px}.head{display:flex;justify-content:space-between;align-items:start}.head h3{font-size:14px;margin:5px 0 0}.head>strong{font-size:27px}.track{height:5px;background:#1a2329;border-radius:99px;overflow:hidden;margin:25px 0 12px}.track span{display:block;height:100%;width:0;background:var(--lime);transition:.4s}.card p{font-size:10px;line-height:1.55;color:#697781}.mini{display:flex;gap:28px;border-top:1px solid var(--line);padding-top:13px;margin-top:17px}.mini span{font-size:7px;letter-spacing:.13em;color:#53616b}.mini b{color:#aeb9c0;margin-left:5px}.rules{margin-top:20px}.rule{display:grid;grid-template-columns:24px 1fr auto;gap:7px;align-items:center;border-top:1px solid var(--line);padding:11px 0;font-size:9px}.rule em{font-style:normal;color:#66747d;font-size:7px;letter-spacing:.13em}.bottom{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding:14px 3px;margin-top:9px}.bottom span{font-size:7px;color:#4f5e68;letter-spacing:.22em}
+.checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.section{font-size:7px;color:#62717b;letter-spacing:.2em;display:flex;justify-content:space-between;margin-bottom:23px}.section span{color:#3e4c56}.slider{margin-bottom:23px}.slider label{font-size:9px;display:flex;justify-content:space-between;font-weight:700}.slider output{color:var(--lime)}input[type=range]{width:100%;accent-color:var(--lime);margin-top:10px}
+.question{border-top:1px solid var(--line);padding:13px 0;display:flex;justify-content:space-between;gap:15px;align-items:center}.question b{display:block;font-size:9px}.question small{display:block;color:#55636d;font-size:7px;margin-top:4px}.yn{display:flex;gap:4px}.yn button{border:1px solid #263139;background:#11171c;color:#64727c;border-radius:6px;padding:7px 10px;font-size:7px;cursor:pointer}.yn .yes{border-color:#60303a;color:var(--red);background:#211216}.yn .no{border-color:#31503e;color:var(--green);background:#111d17}
+.result{margin-top:9px;border:1px solid #29343b;border-radius:11px;background:#0d1318;padding:17px;display:flex;justify-content:space-between;align-items:center}.mental-advice{margin-top:9px;border:1px solid #29343b;border-radius:11px;background:linear-gradient(135deg,#0d1318,#0a0e12);padding:17px}.advice-head{display:flex;justify-content:space-between;align-items:center;font-size:7px;letter-spacing:.16em;color:#62717b}.advice-head b{font-size:7px;color:var(--lime);letter-spacing:.13em}.mental-advice h3{font-size:14px;margin:9px 0 5px}.mental-advice p{margin:0;color:#71808a;font-size:9px;line-height:1.6;max-width:850px}.advice-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.advice-actions span{font-size:7px;border:1px solid #29363e;border-radius:99px;padding:6px 9px;color:#aab5bc;background:#0a1014}.advice-actions .danger{border-color:#5a3038;color:#e797a2}.advice-actions .warn{border-color:#5a4828;color:#e7bd79}.advice-actions .good{border-color:#31503e;color:#9ad09f}.result h3{margin:5px 0;font-size:14px}.result p{margin:0;color:#687781;font-size:9px}.lock{display:flex;justify-content:space-between;background:#180c10;border:1px solid #4a252e;border-radius:9px;color:#e797a2;padding:12px 14px;font-size:8px;margin-bottom:9px}.formgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.trade label{font-size:7px;color:#65737d;letter-spacing:.12em}.trade input,.trade select,.trade textarea{display:block;width:100%;margin-top:7px;background:#070b0f;border:1px solid #26323a;border-radius:6px;color:#e2e9ed;padding:10px;outline:none}.trade textarea{min-height:72px;resize:vertical}.checks{display:flex;gap:20px;border-top:1px solid var(--line);padding-top:15px;margin-top:17px;flex-wrap:wrap}.checks label{color:#71808a}.checks input{accent-color:var(--lime)}.full{width:100%;margin-top:17px}.table{margin-top:9px}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:8px}th,td{text-align:left;padding:11px 7px;border-top:1px solid var(--line);white-space:nowrap}th{font-size:6px;letter-spacing:.13em;color:#4e5c66}td{color:#87939c}.win{color:var(--green)!important}.loss{color:var(--red)!important}
+.bars{height:180px;display:flex;gap:5px;align-items:end;padding:20px 0 4px}.bar{flex:1;background:#55636d;border-radius:3px 3px 0 0;min-width:7px}.bar.pos{background:#729d63}.bar.neg{background:#713f4a}.data{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.data .card{cursor:pointer;transition:.2s}.data .card:hover{border-color:#3a4851;transform:translateY(-2px)}.data b{font-size:9px}.data p{font-size:8px;color:#586671}.danger{color:#ed8794}.page button:disabled{opacity:.35;cursor:not-allowed}
+
+.trade-photo{border-top:1px solid var(--line);padding-top:17px}
+.photo-head{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.photo-head b{display:block;font-size:10px;margin-top:4px}
+.photo-head small{display:block;color:#596873;font-size:8px;margin-top:4px}
+.upload-btn{background:#121a20;border:1px solid #2b3942;color:#dce5ea;border-radius:7px;padding:10px 12px;font-size:7px;font-weight:900;letter-spacing:.12em;cursor:pointer;white-space:nowrap}
+.upload-btn:hover{border-color:#65747d;background:#182229}
+.photo-drop{position:relative;margin-top:11px;border:1px dashed #33414a;border-radius:9px;background:#080d11;min-height:155px;display:grid;place-items:center;overflow:hidden;transition:.2s}
+.photo-drop.drag{border-color:var(--lime);background:#10170d}
+.photo-placeholder{text-align:center;padding:25px}
+.upload-icon{width:34px;height:34px;border:1px solid #34424b;border-radius:9px;display:grid;place-items:center;margin:0 auto 9px;color:var(--lime);font-size:16px}
+.photo-placeholder b{display:block;font-size:9px}
+.photo-placeholder span{display:block;color:#566570;font-size:8px;margin-top:5px}
+#photoPreview{display:block;width:100%;max-height:330px;object-fit:contain;background:#05080a}
+.remove-photo{position:absolute;right:10px;top:10px;width:28px;height:28px;border:1px solid #55303a;background:#1a0d11;color:#ff8998;border-radius:7px;font-size:18px;line-height:1;cursor:pointer}
+.trade-thumb{width:44px;height:34px;object-fit:cover;border-radius:5px;border:1px solid #2a353d;cursor:pointer}
+.no-photo{color:#39464f;font-size:9px}
+
+.delete-trade{border:1px solid #41252c;background:#160d10;color:#ef8794;border-radius:5px;
+padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
+.delete-trade:hover{border-color:#ff6675;background:#251015;color:#ffabb5}
+@media(max-width:900px){.sidebar{position:static;width:100%;height:auto;border-right:0;border-bottom:1px solid var(--line)}.app{display:block}.sidefoot{display:none}nav{display:flex;overflow:auto}.nav button{min-width:120px}.profile{display:none}main{margin:0;width:100%;padding:20px}.hero{grid-template-columns:1fr}.radar{display:none}.kpis{grid-template-columns:1fr 1fr}.grid,.checkgrid,.data{grid-template-columns:1fr}.top{height:58px}.hero-actions{flex-wrap:wrap}.formgrid{grid-template-columns:1fr}}
+@media(max-width:500px){.kpis{grid-template-columns:1fr}.state h2{font-size:31px}.state{align-items:flex-start;flex-direction:column}.question{align-items:flex-start;flex-direction:column}.yn{width:100%}.yn button{flex:1}.result{flex-direction:column;align-items:flex-start;gap:13px}.result .btn{width:100%}}
+</style>
+
+<style>
+.boot-screen{position:fixed;inset:0;background:#020202;z-index:1000;display:grid;place-items:center;overflow:hidden;transition:opacity .8s ease,visibility .8s}
+.boot-screen.hide{opacity:0;visibility:hidden}
+.boot-noise{position:absolute;inset:0;opacity:.05;background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,#fff 4px)}
+.boot-content{width:min(620px,82vw);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;position:relative}
+.boot-mark{font-size:clamp(38px,7vw,76px);font-weight:900;letter-spacing:.16em;color:#eee;margin-bottom:42px;text-shadow:0 0 35px rgba(255,255,255,.08)}
+.boot-mark span{opacity:.35}
+.boot-line{font-size:10px;letter-spacing:.14em;color:#626262;margin:13px 0;opacity:0;transform:translateX(-8px);transition:.4s}
+.boot-line.show{opacity:1;transform:none}.boot-line b{color:#eee}
+.boot-progress{height:1px;background:#252525;margin-top:34px;overflow:hidden}.boot-progress span{display:block;height:100%;width:0;background:#eee;box-shadow:0 0 15px #fff;transition:width .2s}
+.boot-status{font-size:7px;color:#4d4d4d;letter-spacing:.2em;margin-top:12px}
+.dark-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:9px}.ritual-card,.firewall-card{min-height:210px}
+.ritual-list{display:grid;gap:11px;border-top:1px solid #222;margin-top:18px;padding-top:14px}.ritual-list label{font-size:9px;color:#aaa;display:flex;gap:9px;align-items:center}.ritual-list input{accent-color:#eee}
+.ritual-score{display:flex;justify-content:space-between;border-top:1px solid #222;margin-top:17px;padding-top:12px;font-size:7px;color:#666;letter-spacing:.15em}.ritual-score b{font-size:12px;color:#eee}
+.firewall-bar{height:4px;background:#1b1b1b;margin:29px 0 13px;border-radius:99px;overflow:hidden}.firewall-bar span{display:block;height:100%;width:0;background:#eee;transition:.5s}
+.firewall-meta{display:grid;grid-template-columns:1fr 1fr;gap:9px;font-size:7px;color:#555;letter-spacing:.12em}.firewall-meta b{color:#ddd}
+.review-trade{border:1px solid #444;background:#111;color:#ddd;border-radius:5px;padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;margin-right:4px}.review-trade:hover{border-color:#aaa;background:#1c1c1c}
+.review-modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:none;align-items:center;justify-content:center;padding:25px;backdrop-filter:blur(10px)}.review-modal.open{display:flex}
+.review-panel{width:min(1050px,96vw);max-height:92vh;overflow:auto;background:#090909;border:1px solid #333;border-radius:13px;padding:25px;position:relative;box-shadow:0 25px 100px #000}
+.review-close{position:absolute;right:17px;top:15px;background:#111;border:1px solid #333;color:#ccc;border-radius:7px;width:35px;height:35px;font-size:20px;cursor:pointer}.review-panel h2{font-size:27px;letter-spacing:.06em;margin:8px 0 22px}
+.review-layout{display:grid;grid-template-columns:1.35fr .65fr;gap:15px}.review-image-wrap{min-height:360px;background:#030303;border:1px solid #222;border-radius:9px;display:grid;place-items:center;overflow:hidden}.review-image-wrap img{width:100%;max-height:600px;object-fit:contain}.review-image-wrap img[hidden]{display:none}.review-image-wrap div{font-size:8px;color:#444;letter-spacing:.2em}
+.review-info{display:grid;align-content:start;gap:10px}.review-stats,.review-emotions{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#222;border:1px solid #222}.review-stats div,.review-emotions div{background:#0c0c0c;padding:15px}.review-stats span,.review-emotions span,.review-notes>span{display:block;font-size:7px;color:#555;letter-spacing:.14em}.review-stats b,.review-emotions b{display:block;font-size:18px;margin-top:7px}.review-flags{display:flex;flex-wrap:wrap;gap:5px}.review-flags span{font-size:7px;border:1px solid #333;padding:6px 8px;border-radius:5px;color:#aaa}.review-notes{border:1px solid #222;background:#0c0c0c;padding:14px;min-height:100px}.review-notes p{font-size:9px;color:#aaa;line-height:1.6}
+@media(max-width:900px){.dark-grid{grid-template-columns:1fr}.review-layout{grid-template-columns:1fr}}
+</style>
+
+<style>
+.protocol-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:18px}.rules-card,.funding-card{padding:24px}.rule{padding:15px 0;border-bottom:1px solid #202b32;display:flex;flex-direction:column;gap:5px}.rule:last-child{border-bottom:0}.rule b{font-size:12px;letter-spacing:.12em}.rule span{color:#91a0aa;font-size:13px;line-height:1.5}.phase-tabs{display:flex;gap:8px;margin:18px 0}.phase-tab{background:#0c1115;color:#71808a;border:1px solid #26323a;padding:9px 15px;border-radius:7px;cursor:pointer;font-weight:800}.phase-tab.active{color:#fff;border-color:#8d9aa3;background:#161d22}.phase-head{display:flex;justify-content:space-between;gap:20px}.phase-head div{display:flex;flex-direction:column;gap:4px}.phase-head small,.phase-numbers,.funding-steps small{color:#687783;font-size:10px;letter-spacing:.1em}.phase-head strong{font-size:24px}.progress-track{height:10px;background:#11181d;border:1px solid #26323a;border-radius:99px;overflow:hidden;margin:20px 0 8px}.progress-track i{display:block;height:100%;width:0;background:#e8eef2;transition:width .5s ease}.phase-numbers{display:flex;justify-content:space-between}.phase-status{margin-top:18px;padding:12px;border:1px solid #26323a;text-align:center;font-size:11px;letter-spacing:.12em}.phase-status.complete{border-color:#dfe7eb;color:#fff}.phase-status.blocked{border-color:#777;color:#aaa}.funding-steps{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:22px}.funding-steps>div{border:1px solid #202b32;padding:13px;display:grid;grid-template-columns:30px 1fr;column-gap:8px}.funding-steps b{grid-row:span 2}.funding-steps span{font-weight:800;font-size:12px}.funding-steps small{grid-column:2;letter-spacing:0;font-size:11px;line-height:1.4;margin-top:4px}.funding-warning{margin-top:18px;border:1px solid #3b454c;padding:14px;display:flex;gap:12px;align-items:flex-start}.funding-warning b{font-size:10px;letter-spacing:.15em}.funding-warning span{font-size:12px;color:#9aa7af;line-height:1.5}
+.quality-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:15px}.quality-card{border:1px solid #2a3339;padding:15px;display:flex;flex-direction:column;gap:5px;min-height:160px}.quality-card b{font-size:18px;letter-spacing:.1em}.quality-card span{font-size:8px;color:#7b8992;letter-spacing:.15em}.quality-card small{font-size:10px;color:#9aa6ad;line-height:1.5;margin-top:6px}.quality-card em{font-style:normal;font-size:7px;letter-spacing:.18em;margin-top:auto}.quality-card.alpha{border-color:#727c82}.quality-card.alpha em{color:#fff}.quality-card.beta em{color:#aaa}.quality-card.gamma{opacity:.72}.quality-card.gamma em{color:#777}.risk-table{margin-top:15px;border:1px solid #202a31}.risk-table>div{display:grid;grid-template-columns:1fr .8fr 1.5fr;gap:8px;padding:10px;border-bottom:1px solid #202a31;font-size:9px;align-items:center}.risk-table>div:last-child{border-bottom:0}.risk-table>div:first-child{color:#66747d;font-size:7px;letter-spacing:.16em}.risk-table b{font-size:9px}.risk-table span:last-child{color:#7e8b93}.risk-note{display:block;color:#626f77;font-size:8px;line-height:1.5;margin-top:10px}.protocol-lower{margin-top:18px}.buffer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}.buffer-grid>div{border:1px solid #202a31;padding:13px}.buffer-grid small{display:block;color:#66747d;font-size:7px;letter-spacing:.15em}.buffer-grid b{display:block;font-size:20px;margin-top:5px}.kill-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:15px}.kill-grid>div{border:1px solid #202a31;padding:13px}.kill-grid b{display:block;font-size:20px}.kill-grid span{display:block;color:#66747d;font-size:7px;letter-spacing:.12em;margin-top:4px}.kill-message{border:1px solid #333;padding:11px;margin-top:9px;font-size:9px;color:#929da4;line-height:1.5}.weekly-card{margin-top:18px}.weekly-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:15px}.weekly-grid>div{border:1px solid #202a31;padding:13px;min-height:100px}.weekly-grid b{font-size:9px;letter-spacing:.12em}.weekly-grid span{display:block;color:#818d94;font-size:9px;line-height:1.5;margin-top:9px}.protocol-quote{margin-top:18px}.watch-active #dailyLockState{color:#fff}.trade .formgrid label:last-child select{min-width:150px}
+@media(max-width:900px){.protocol-grid{grid-template-columns:1fr}.quality-grid,.weekly-grid{grid-template-columns:1fr}.kill-grid{grid-template-columns:1fr}.risk-table>div{grid-template-columns:1fr}.buffer-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="bootScreen" class="boot-screen">
+  <div class="boot-noise"></div>
+  <div class="boot-content">
+    <div class="boot-mark">UNKN<span>O</span>WN</div>
+    <div class="boot-line" id="bootLine1">INITIALIZING UNKNOWN OS<span>...</span></div>
+    <div class="boot-line" id="bootLine2">LOADING PSYCHOLOGICAL FIREWALL<span>...</span></div>
+    <div class="boot-line" id="bootLine3">RISK ENGINE: <b>OFFLINE</b></div>
+    <div class="boot-line" id="bootLine4">IDENTITY: <b>UNKNOWN</b></div>
+    <div class="boot-line" id="bootLine5">ACCESS: <b>RESTRICTED</b></div>
+    <div class="boot-progress"><span id="bootProgress"></span></div>
+    <div class="boot-status" id="bootStatus">ESTABLISHING PRIVATE INSTANCE</div>
+  </div>
+</div>
+
+<div class="candle-scene" aria-hidden="true">
+  <div class="pattern p1"><i class="candle up"><b></b></i><i class="candle down"><b></b></i><i class="candle up"><b></b></i></div>
+  <div class="pattern p2"><i class="candle hammer"><b></b></i><i class="candle up"><b></b></i></div>
+  <div class="pattern p3"><i class="candle up"><b></b></i><i class="candle down"><b></b></i><i class="candle up"><b></b></i><i class="candle down"><b></b></i></div>
+  <div class="pattern p4"><i class="candle doji"><b></b></i><i class="candle up"><b></b></i></div>
+  <div class="pattern p5"><i class="candle down"><b></b></i><i class="candle shooting"><b></b></i></div>
+  <div class="pattern p6"><i class="candle up"><b></b></i><i class="candle up"><b></b></i><i class="candle down"><b></b></i></div>
+  <div class="pattern p7"><i class="candle down"><b></b></i><i class="candle down"><b></b></i><i class="candle up"><b></b></i></div>
+  <div class="scanline"></div>
+</div>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="mark">TR</div><div><b>UNKNOWN OS</b><small>CONTROL PSICOLÓGICO</small></div></div>
+  <div class="user"><div class="avatar">S</div><div><b>TRADER</b><small>ESPACIO PRIVADO</small></div><i class="online"></i></div>
+  <div class="nav">
+    <button class="active" data-page="dashboard"><span>01</span> RESUMEN</button>
+    <button data-page="checkin"><span>02</span> CHEQUEO MENTAL</button>
+    <button data-page="trades"><span>03</span> REGISTRO DE OPERACIONES</button>
+    <button data-page="analytics"><span>04</span> ANÁLISIS</button>
+    <button data-page="protocol"><span>05</span> PROTOCOLO</button>
+    <button data-page="data"><span>06</span> DATOS / RESPALDO</button>
+  </div>
+  <div class="sidefoot"><i></i><div><b>MODO LOCAL</b><small>Todo permanece en esta PC</small></div></div>
+</aside>
+
+<main>
+<header class="top"><div><div class="crumb">TRADINGOS / <b id="crumb">RESUMEN</b></div><h1 id="title">Centro de control</h1></div><div class="time"><b id="clock">--:--</b><small id="date">---</small><span class="time-watch" id="timeWatch"><i></i><b id="timeWatchState">WATCH STANDBY</b><small id="timeWatchHint">21:00 — 01:00</small></span></div></header>
+
+<section class="page active" id="dashboard">
+<div class="unknown-tag">// IDENTITY UNKNOWN · SYSTEM ONLINE · PRIVATE INSTANCE</div>
+  <div class="hero">
+    <div class="hero-left">
+      <div class="eyebrow">ESTADO PSICOLÓGICO ACTUAL</div>
+      <div class="state"><h2 id="state">SIN CHEQUEO</h2><span class="badge" id="badge">● EN ESPERA</span></div>
+      <p id="desc">Haz tu chequeo mental antes de tomar una operación.</p>
+      <div class="watch-status"><span class="watch-dot"></span><b id="watchState">WATCH WINDOW · STANDBY</b><small id="watchHint">21:00 — 01:00</small></div>
+      <div class="hero-actions">
+        <div class="metric"><small>RIESGO AUTORIZADO</small><strong id="risk">—</strong></div>
+        <div class="metric"><small>RANGO MENTAL</small><strong id="score">—</strong></div>
+        <button class="btn primary" data-go="checkin">HACER CHEQUEO ↗</button>
+      </div>
+    </div>
+    <div class="radar"><div class="gauge" id="gauge"><div class="gauge-content"><b id="gaugeNum">—</b><span>RANGO</span></div></div><small>CARGA PSICOLÓGICA</small></div>
+  </div>
+  <div class="kpis">
+    <div class="kpi"><small>P&L DEL DÍA</small><b id="pnl">0.00%</b><span>sesión actual</span></div>
+    <div class="kpi"><small>RACHA DE PÉRDIDAS</small><b id="losses">0</b><span>pérdidas consecutivas</span></div>
+    <div class="kpi"><small>DRAWDOWN DEL DÍA</small><b id="drawdown">0.00%</b><span>desde el máximo de la sesión</span></div>
+    <div class="kpi"><small>OPERACIONES</small><b id="todayTrades">0</b><span>registradas hoy</span></div>
+  </div>
+  <div class="grid">
+    <div class="card"><div class="head"><div><div class="eyebrow">CONTROL DEL PROCESO</div><h3>Calidad de ejecución</h3></div><strong id="process">—</strong></div><div class="track"><span id="processBar"></span></div><p id="processText">Registra operaciones para medir tu proceso.</p><div class="mini"><span>CUMPLIMIENTO DE REGLAS <b id="rules">—</b></span><span>CONTROL EMOCIONAL <b id="emotion">—</b></span></div></div>
+    <div class="card"><div class="head"><div><div class="eyebrow">PROTOCOLO DE RIESGO</div><h3>Límites estrictos</h3></div><strong>◈</strong></div><div class="rules"><div class="rule"><span>01</span><b>Intención de venganza</b><em>BLOQUEAR</em></div><div class="rule"><span>02</span><b>Romper una regla</b><em>BLOQUEAR</em></div><div class="rule"><span>03</span><b>3 pérdidas consecutivas</b><em>PAUSAR</em></div><div class="rule"><span>04</span><b>Aumento de riesgo</b><em>DENEGAR</em></div></div></div>
+  </div>
+  
+  <div class="dark-grid">
+    <div class="card ritual-card">
+      <div class="eyebrow">06 / NIGHT WATCH PROTOCOL</div>
+      <div class="head"><div><h3>WATCH WINDOW · 21:00 — 01:00</h3><p>No necesitas estar pegado a la pantalla. Solo estar disponible para reconocer una oportunidad real.</p></div><strong>◐</strong></div>
+      <div class="ritual-list">
+        <label><input type="checkbox" data-ritual="sleep"> Dormí / descansé correctamente</label>
+        <label><input type="checkbox" data-ritual="bias"> Estoy observando sin forzar una entrada</label>
+        <label><input type="checkbox" data-ritual="risk"> Ya acepté cuánto puedo perder hoy</label>
+        <label><input type="checkbox" data-ritual="one"> Acepto terminar la noche con cero operaciones</label>
+      </div>
+      <div class="ritual-score"><span>PREPARACIÓN</span><b id="ritualScore">0%</b></div>
+    </div>
+    <div class="card firewall-card">
+      <div class="eyebrow">07 / PSYCHOLOGICAL FIREWALL</div>
+      <div class="head"><div><h3 id="firewallTitle">SISTEMA EN ESPERA</h3><p id="firewallText">El firewall analiza tu estado antes de autorizar riesgo.</p></div><strong id="firewallIcon">◈</strong></div>
+      <div class="firewall-bar"><span id="firewallBar"></span></div>
+      <div class="firewall-meta"><span>RIESGO</span><b id="firewallRisk">—</b><span>ESTADO</span><b id="firewallState">SIN CHEQUEO</b></div>
+    </div>
+    <div class="card quote-card">
+      <div class="eyebrow">08 / UNKNOWN SIGNAL</div>
+      <div class="quote-mark">“</div>
+      <h3 id="quoteText">NO NECESITAS UNA OPERACIÓN. NECESITAS DISCIPLINA.</h3>
+      <div class="quote-line"></div>
+      <small id="quoteIndex">SIGNAL 01 / 14</small>
+    </div>
+  </div>
+<div class="bottom"><span>LA DISCIPLINA ES LA VENTAJA.</span><button class="btn" data-go="trades">OPEN REGISTRO DE OPERACIONES →</button></div>
+</section>
+
+<section class="page" id="checkin">
+<div class="intro"><small>02 / CHEQUEO MENTAL</small><h2>Antes de tocar el mercado.</h2><p>El sistema no intenta decirte si el mercado va a subir. Decide si <b>tú</b> estás en condiciones de asumir riesgo.</p></div>
+<div class="checkgrid">
+<div class="card"><div class="section">AUTOEVALUACIÓN <span>1 — 10</span></div>
+<div class="slider"><label>STRESS <output id="os">5</output></label><input id="stress" type="range" min="1" max="10" value="5"></div>
+<div class="slider"><label>ANXIETY <output id="oa">5</output></label><input id="anxiety" type="range" min="1" max="10" value="5"></div>
+<div class="slider"><label>ENERGY <output id="oe">5</output></label><input id="energy" type="range" min="1" max="10" value="5"></div>
+<div class="slider"><label>CONFIDENCE <output id="oc">5</output></label><input id="confidence" type="range" min="1" max="10" value="5"></div>
+<div class="slider"><label>URGENCY TO WIN <output id="ou">5</output></label><input id="urgency" type="range" min="1" max="10" value="5"></div>
+</div>
+<div class="card"><div class="section">PREGUNTAS CLAVE <span>YES / NO</span></div>
+<div class="question"><div><b>¿Quieres recuperar una pérdida?</b><small>Recuperar una pérdida no es un objetivo de trading.</small></div><div class="yn" data-f="recover"><button type="button">YES</button><button type="button">NO</button></div></div>
+<div class="question"><div><b>¿Sientes FOMO?</b><small>¿Te preocupa que “se vaya” la entrada?</small></div><div class="yn" data-f="fomo"><button type="button">YES</button><button type="button">NO</button></div></div>
+<div class="question"><div><b>¿Estás emocionalmente estable?</b><small>Sin enojo, euforia o desesperación.</small></div><div class="yn" data-f="stable"><button type="button">YES</button><button type="button">NO</button></div></div>
+<div class="question"><div><b>¿Has roto una regla hoy?</b><small>Honestidad > resultado.</small></div><div class="yn" data-f="ruleBreak"><button type="button">YES</button><button type="button">NO</button></div></div>
+<div class="question"><div><b>¿Dormiste y descansaste lo suficiente?</b><small>Fatiga = peor toma de decisiones.</small></div><div class="yn" data-f="sleepDebt"><button type="button">YES</button><button type="button">NO</button></div></div>
+<div class="question"><div><b>¿Tienes la cabeza ocupada con algo externo al trading?</b><small>Problemas personales o distracciones reducen tu atención.</small></div><div class="yn" data-f="distracted"><button type="button">YES</button><button type="button">NO</button></div></div>
+<div class="question"><div><b>¿Aceptarías perder el riesgo de esta operación?</b><small>Si perderlo te haría querer recuperar, no estás listo.</small></div><div class="yn" data-f="acceptLoss"><button type="button">YES</button><button type="button">NO</button></div></div>
+<div class="question"><div><b>¿Sientes necesidad de demostrar que tienes razón?</b><small>El mercado no necesita darte la razón.</small></div><div class="yn" data-f="prove"><button type="button">YES</button><button type="button">NO</button></div></div>
+<div class="question"><div><b>¿Sientes tensión física o inquietud mientras miras el gráfico?</b><small>Mandíbula, pecho, manos, respiración o inquietud constante.</small></div><div class="yn" data-f="tension"><button type="button">YES</button><button type="button">NO</button></div></div>
+<div class="question"><div><b>¿Tienes claro exactamente qué tendría que pasar para entrar?</b><small>Sin condiciones claras, solo estás buscando una entrada.</small></div><div class="yn" data-f="clearPlan"><button type="button">YES</button><button type="button">NO</button></div></div>
+<div class="question"><div><b>¿Sientes ganas de vengarte del mercado?</b><small>Una pérdida no necesita una respuesta inmediata.</small></div><div class="yn" data-f="revenge"><button type="button">YES</button><button type="button">NO</button></div></div>
+</div></div>
+<div class="result"><div><div class="eyebrow">MOTOR DE DECISIÓN</div><h3 id="resultTitle">LISTO PARA EVALUAR</h3><p id="resultText">Completa las variables y calcula tu capacidad de riesgo.</p></div><button class="btn primary" id="saveCheck">CALCULAR ESTADO ↗</button></div>
+<div class="mental-advice" id="mentalAdvice"><div class="advice-head"><span>RECOMENDACIÓN DEL FIREWALL</span><b id="adviceLevel">EN ESPERA</b></div><h3 id="adviceTitle">Primero evalúa tu estado.</h3><p id="adviceText">El sistema convertirá tus respuestas en una recomendación concreta antes de autorizar riesgo.</p><div class="advice-actions" id="adviceActions"></div></div>
+</section>
+
+<section class="page" id="trades">
+<div class="intro"><small>03 / REGISTRO DE OPERACIONES</small><h2>Registra la operación.</h2><p>El resultado es secundario. Aquí medimos si ejecutaste como el trader que quieres ser.</p></div>
+<div class="lock" id="lock"><b>⛔ TRADING LOCKED</b><span>Haz un check-in válido para poder registrar una operación.</span></div>
+<form class="card trade" id="tradeForm"><div class="head"><div><div class="eyebrow">NUEVA OPERACIÓN</div><h3>Registrar operación</h3></div><strong id="formRisk">Risk —</strong></div>
+<div class="formgrid"><label>RESULTADO<select id="tr"><option value="win">GANADA</option><option value="loss">PERDIDA</option><option value="be">TABLAS</option></select></label><label>RIESGO %<input id="trisk" type="number" min="0" step=".01" value=".5"></label><label>P&L %<input id="tpnl" type="number" step=".01" value="0"></label><label>FASE DE FONDEO<select id="phase"><option value="1">FASE 1 · 10K</option><option value="2">FASE 2 · 10K</option><option value="3">REAL · 10K</option></select></label>
+<label>CALIDAD DEL SETUP<select id="quality"><option value="alpha">ALPHA · ALTA</option><option value="beta">BETA · MEDIA</option><option value="gamma">GAMMA · BAJA</option></select></label></div>
+<div class="formgrid"><label>EMOCIÓN ANTES<input id="before" type="number" min="1" max="10" value="3"></label><label>EMOCIÓN DURANTE<input id="during" type="number" min="1" max="10" value="3"></label><label>EMOCIÓN DESPUÉS<input id="after" type="number" min="1" max="10" value="3"></label></div>
+<div class="checks"><label><input id="followed" type="checkbox" checked> SEGUÍ EL PLAN</label><label><input id="tfomo" type="checkbox"> FOMO</label><label><input id="revenge" type="checkbox"> VENGANZA</label></div>
+<div class="trade-photo">
+  <div class="photo-head">
+    <div><div class="eyebrow">TRADE CAPTURASHOT</div><b>Evidencia visual</b><small>Guarda la captura junto con esta operación.</small></div>
+    <label class="upload-btn" for="tradeImage">+ ADD CAPTURASHOT</label>
+    <input id="tradeImage" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+  </div>
+  <div class="photo-drop" id="photoDrop">
+    <div class="photo-placeholder" id="photoPlaceholder">
+      <div class="upload-icon">↑</div>
+      <b>Arrastra tu captura aquí</b>
+      <span>o usa “Agregar captura” · JPG, PNG o WEBP</span>
+    </div>
+    <img id="photoPreview" alt="Vista previa de la captura de la operación" hidden>
+    <button type="button" class="remove-photo" id="removePhoto" hidden>×</button>
+  </div>
+</div>
+<label>NOTAS<textarea id="notes" placeholder="Qué hiciste bien / qué mejorarías..."></textarea></label><button class="btn primary full" type="submit">REGISTRAR OPERACIÓN →</button></form>
+<div class="card table"><div class="head"><div><div class="eyebrow">HISTORIAL DE SESIÓN</div><h3>Operaciones recientes</h3></div><span id="total">0 trades</span></div><div class="scroll"><table><thead><tr><th>TIME</th><th>CAPTURA</th><th>RESULTADO</th><th>P&L</th><th>RISK</th><th>QUALITY</th><th>PROCESO</th><th>NOTAS</th><th></th></tr></thead><tbody id="rows"></tbody></table></div></div>
+</section>
+
+<section class="page" id="analytics">
+<div class="intro"><small>04 / ANÁLISIS</small><h2>Know your behavior.</h2><p>No busques solamente win rate. Busca las condiciones bajo las cuales ejecutas mejor.</p></div>
+<div class="kpis"><div class="kpi"><small>TOTAL TRADES</small><b id="atotal">0</b></div><div class="kpi"><small>WIN RATE</small><b id="awin">0%</b></div><div class="kpi"><small>AVG PROCESO</small><b id="aprocess">—</b></div><div class="kpi"><small>AVG RISK</small><b id="arisk">0%</b></div></div>
+<div class="grid"><div class="card"><div class="eyebrow">DIAGNÓSTICO DE COMPORTAMIENTO</div><h3 id="diag">Recopilando datos...</h3><p id="diagp">Después de varias operaciones aparecerán patrones.</p></div><div class="card"><div class="section">P&L RECIENTE</div><div class="bars" id="bars"></div></div></div>
+</section>
+
+<section class="page" id="protocol">
+<div class="intro"><small>05 / PROTOCOLO OPERATIVO</small><h2>UNKNOWN OS Trading Protocol.</h2><p>Tu ventaja no es operar más. Es saber exactamente cuándo estás autorizado a asumir riesgo.</p></div>
+<div class="protocol-grid">
+<div class="card rules-card"><div class="section">REGLAS OPERATIVAS <span>CORE</span></div>
+<div class="rule"><b>01 · WATCH WINDOW</b><span>21:00 — 01:00. Observar no significa entrar. Espera una oportunidad real.</span></div>
+<div class="rule"><b>02 · SOLO BUENAS DIVERGENCIAS</b><span>No se entra por cualquier divergencia. La señal necesita contexto, liquidez, reacción y estructura.</span></div>
+<div class="rule"><b>03 · DOLOR / CANSANCIO / PRISA = NO TRADE</b><span>Si estás alterado, cansado, ansioso o con prisa por ganar, el mercado pierde acceso a tu riesgo.</span></div>
+<div class="rule"><b>04 · NO RECUPERAR PÉRDIDAS</b><span>Una pérdida no crea una deuda. Prohibido aumentar riesgo para recuperar.</span></div>
+<div class="rule"><b>05 · UNA OPERACIÓN POR DÍA</b><span>La calidad manda. Si ya ejecutaste, no necesitas volver a buscar acción.</span></div>
+<div class="rule"><b>06 · NO TRAILING STOP</b><span>Gestiona según el plan original. No improvises la salida por miedo o euforia.</span></div>
+<div class="rule"><b>07 · R:R 1:2 — 1:5</b><span>Solo aceptar operaciones donde la relación riesgo/beneficio tenga sentido para el setup.</span></div>
+<div class="rule"><b>08 · PROCESO &gt; RESULTADO</b><span>Una operación correcta puede perder. Una impulsiva puede ganar. Evalúa la ejecución.</span></div>
+<div class="rule"><b>09 · NO COMPARARTE</b><span>No compares resultados ni velocidad con otros traders. Tu única referencia es tu protocolo.</span></div>
+<div class="rule"><b>10 · CERO VENGANZA / FOMO</b><span>Si aparece revenge, FOMO o urgencia por recuperar, el sistema bloquea el riesgo.</span></div>
+<div class="rule"><b>11 · NO OPERAR TAMBIÉN ES EJECUTAR</b><span>Un día con cero operaciones puede ser una sesión perfecta.</span></div>
+<div class="rule"><b>12 · PROTEGER EL CAPITAL</b><span>Sobrevivir tiene prioridad sobre acelerar. El mercado siempre tendrá otra oportunidad.</span></div>
+</div>
+<div class="card funding-card"><div class="section">FUNDING PROTOCOL <span>2 PHASES + REAL</span></div>
+<div class="phase-tabs"><button class="phase-tab active" data-phase-view="1">FASE 1 · 10K</button><button class="phase-tab" data-phase-view="2">FASE 2 · 10K</button><button class="phase-tab" data-phase-view="3">REAL · 10K</button></div>
+<div class="funding-phase" id="fundingPhase1"><div class="phase-head"><div><small>OBJETIVO</small><strong>+6.00%</strong></div><div><small>LÍMITE</small><strong>−6.00%</strong></div></div><div class="progress-track"><i id="phaseBar1"></i></div><div class="phase-numbers"><span id="phasePnl1">0.00%</span><span>+6.00%</span></div><div class="phase-status" id="phaseStatus1">FASE 1 · EN ESPERA</div></div>
+<div class="funding-phase" id="fundingPhase2" hidden><div class="phase-head"><div><small>OBJETIVO</small><strong>+6.00%</strong></div><div><small>LÍMITE</small><strong>−6.00%</strong></div></div><div class="progress-track"><i id="phaseBar2"></i></div><div class="phase-numbers"><span id="phasePnl2">0.00%</span><span>+6.00%</span></div><div class="phase-status" id="phaseStatus2">FASE 2 · EN ESPERA</div></div>
+<div class="funding-phase" id="fundingPhase3" hidden><div class="phase-head"><div><small>OBJETIVO</small><strong>PROTEGER</strong></div><div><small>RIESGO BASE</small><strong>0.50%</strong></div></div><div class="progress-track"><i id="phaseBar3"></i></div><div class="phase-numbers"><span id="phasePnl3">0.00%</span><span>CAPITAL REAL</span></div><div class="phase-status" id="phaseStatus3">REAL · PROTECCIÓN DE CAPITAL</div></div>
+<div class="funding-steps"><div><b>01</b><span>Preparar</span><small>Check mental + riesgo autorizado.</small></div><div><b>02</b><span>Ejecutar</span><small>Solo setups ALPHA/BETA válidos.</small></div><div><b>03</b><span>Proteger</span><small>No acercarte al −6% por acelerar.</small></div><div><b>04</b><span>Completar</span><small>Al +6%, objetivo cumplido. No necesitas exprimir más.</small></div></div>
+<div class="funding-warning"><b>FIREWALL</b><span>−6.00% = límite absoluto de Fase 1 y Fase 2. +6.00% = objetivo. El objetivo nunca justifica aumentar el riesgo.</span></div>
+</div></div>
+
+<div class="protocol-grid protocol-lower">
+<div class="card"><div class="section">SETUP QUALITY ENGINE <span>ALPHA / BETA / GAMMA</span></div>
+<div class="quality-grid">
+<div class="quality-card alpha"><b>ALPHA</b><span>ALTA CALIDAD</span><small>Liquidez clara + reacción fuerte + S/R fuerte + divergencia RSI/MACD + patrón claro + tendencia definida.</small><em>PRIORITARIO</em></div>
+<div class="quality-card beta"><b>BETA</b><span>CALIDAD MEDIA</span><small>Manipulación válida + reacción moderada + S/R parcial + una divergencia + tendencia estable.</small><em>SELECTIVO</em></div>
+<div class="quality-card gamma"><b>GAMMA</b><span>BAJA CALIDAD</span><small>Baja liquidez + sin S/R claro + sin divergencia + sin patrón + movimiento errático.</small><em>NO TRADE</em></div>
+</div>
+</div>
+<div class="card"><div class="section">RISK ENGINE <span>DYNAMIC</span></div>
+<div class="risk-table"><div><span>ESTADO</span><span>RIESGO</span><span>ACCIÓN</span></div><div><b>ÓPTIMO · 0–20</b><b>hasta 1.00%</b><span>Solo si el setup y el protocolo de cuenta lo justifican</span></div><div><b>NORMAL · 21–34</b><b>0.50%</b><span>Riesgo base</span></div><div><b>PRECAUCIÓN · 35–59</b><b>0.25%</b><span>Defensa</span></div><div><b>CUENTA EN DRAWDOWN</b><b>≤ riesgo mental</b><span>El drawdown puede reducir el máximo aunque el estado mental sea óptimo</span></div><div><b>−3% a −4%</b><b>0.33%</b><span>Defensa</span></div><div><b>−5%</b><b>0.25%</b><span>Supervivencia</span></div><div><b>PAUSE / BLOCKED</b><b>0%</b><span>No operar</span></div></div>
+<small class="risk-note">El 1% es una autorización mental máxima, no una obligación. Si la cuenta, el drawdown, la calidad del setup o las reglas de fondeo exigen menos, prevalece el límite más conservador.</small>
+</div>
+</div>
+
+<div class="protocol-grid protocol-lower">
+<div class="card"><div class="section">ACCOUNT BUFFER <span>SUPERVIVENCIA</span></div><div class="buffer-grid"><div><small>P&L FASE 1</small><b id="bufferPnl1">0.00%</b></div><div><small>BUFFER HASTA −6%</small><b id="buffer1">6.00%</b></div><div><small>P&L FASE 2</small><b id="bufferPnl2">0.00%</b></div><div><small>BUFFER HASTA −6%</small><b id="buffer2">6.00%</b></div></div><p id="bufferText">Protege el margen restante. No uses el buffer como permiso para arriesgar más.</p></div>
+<div class="card"><div class="section">DAILY KILL SWITCH <span id="dailyLockState">ARMED</span></div><div class="kill-grid"><div><b id="dailyLosses">0</b><span>PÉRDIDAS HOY</span></div><div><b id="dailyPnl">0.00%</b><span>P&L HOY</span></div><div><b id="weeklyLosses">0</b><span>PÉRDIDAS SEMANA</span></div></div><div class="kill-message" id="killMessage">Máximo operativo: 2 pérdidas o −1.00% diario. Si se alcanza, el mercado queda bloqueado.</div></div>
+</div>
+
+<div class="card weekly-card"><div class="section">WEEKLY MISSION <span>PROCESS FIRST</span></div><div class="weekly-grid"><div><b>SEMANA 1</b><span>Operar únicamente setups de alta calidad.</span></div><div><b>SEMANA 2</b><span>Repetir lo que funcionó y eliminar errores.</span></div><div><b>SEMANA 3</b><span>Mantener el riesgo bajo aunque aparezca confianza.</span></div><div><b>SEMANA 4</b><span>Buscar oportunidades claras y confirmadas.</span></div></div></div>
+
+<div class="card quote-card protocol-quote"><div class="eyebrow">CORE MINDSET</div><div class="quote-mark">“</div><h3>NO NECESITAS ENCONTRAR UNA OPERACIÓN. NECESITAS RECONOCER UNA BUENA.</h3><div class="quote-line"></div><small>UNKNOWN OS · TRADING PROTOCOL</small></div>
+</section>
+<section class="page" id="data">
+<div class="intro"><small>06 / DATA & BACKUP</small><h2>Tus datos. Tu máquina.</h2><p>Todo permanece en este navegador. No necesitas una cuenta ni servidor.</p></div>
+<div class="data"><button class="card" id="export"><b>EXPORTAR RESPALDO ↗</b><p>Descarga un JSON con todo tu historial.</p></button><label class="card"><b>IMPORTAR RESPALDO ↗</b><p>Restaura un respaldo anterior.</p><input id="import" type="file" accept=".json" hidden></label><button class="card danger" id="reset"><b>RESTABLECER SISTEMA ×</b><p>Borra el historial local.</p></button></div>
+</section>
+</main></div>
+
+<script>
+const KEY="UNKNOWN OS_V3";let D=load();function load(){try{return JSON.parse(localStorage.getItem(KEY))||{checkin:null,trades:[],fundingPhase:1}}catch{return{checkin:null,trades:[],fundingPhase:1}}}function save(){localStorage.setItem(KEY,JSON.stringify(D))}
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s),day=()=>new Date().toISOString().slice(0,10);
+function today(){return D.trades.filter(t=>t.date===day())}function loss(){let n=0;for(const t of today().slice().reverse()){if(t.result==="loss")n++;else break}return n}
+function pnl(){return today().reduce((a,t)=>a+Number(t.pnl||0),0)}function dd(){let p=0,c=0,d=0;today().forEach(t=>{c+=t.pnl;p=Math.max(p,c);d=Math.min(d,c-p)});return d}
+function ps(t){let n=100;if(t.quality==="alpha")n+=5;if(t.quality==="gamma")n-=20;if(!t.followed)n-=30;if(t.fomo)n-=25;if(t.revenge)n-=35;if(t.risk>.5)n-=Math.min(25,(t.risk-.5)*30);if((t.before+t.during+t.after)/3>=8)n-=15;return Math.min(100,Math.max(0,Math.round(n)))}
+function avg(){return D.trades.length?Math.round(D.trades.reduce((a,t)=>a+t.process,0)/D.trades.length):null}
+function score(){let c=D.checkin;if(!checkinComplete(c))return null;let n=c.stress*3.2+c.anxiety*3+c.urgency*3+(11-c.energy)*1.4+(11-c.confidence)*1.2;if(c.recover)n+=18;if(c.fomo)n+=14;if(c.stable===false)n+=18;if(c.ruleBreak)n+=22;if(c.sleepDebt===false)n+=8;if(c.distracted)n+=10;if(c.acceptLoss===false)n+=15;if(c.prove)n+=12;if(c.tension)n+=7;if(c.clearPlan===false)n+=12;if(c.revenge)n+=18;n+=Math.min(loss(),3)*5;return Math.max(0,Math.min(100,Math.round(n)))}
+function state(){let s=score(),c=D.checkin;if(s===null)return["SIN CHEQUEO","—","Haz tu chequeo mental antes de tomar una operación.","wait"];if(c.recover||c.ruleBreak||c.stable===false||c.stress>=9||c.anxiety>=9||c.acceptLoss===false||c.revenge||s>=75)return["BLOQUEADO","0%","Condición de bloqueo. No estás autorizado a asumir riesgo ahora.","blocked"];if(s>=60)return["PAUSAR","0%","Necesitas una pausa. No busques una operación para cambiar cómo te sientes.","pause"];if(s>=35)return["PRECAUCIÓN","0.25%","Puedes observar el mercado, pero con riesgo reducido y máxima selectividad.","caution"];if(s>=21)return["NORMAL","0.50%","Estado apto para ejecutar tu plan con riesgo base y sin forzar entradas.","normal"];return["ÓPTIMO","1.00%","Estado mental excepcionalmente estable. Hasta 1% queda autorizado, siempre sujeto al protocolo de cuenta y a un setup válido.","optimal"]}
+function mentalRange(k){return k==="optimal"?"ÓPTIMO":k==="normal"?"NORMAL":k==="caution"?"PRECAUCIÓN":k==="pause"?"PAUSAR":k==="blocked"?"BLOQUEADO":"—"}
+function mentalRangeSpan(k){return k==="optimal"?"RANGO ÓPTIMO · 0–20":k==="normal"?"RANGO NORMAL · 21–34":k==="caution"?"RANGO PRECAUCIÓN · 35–59":k==="pause"?"RANGO PAUSA · 60–74":k==="blocked"?"RANGO CRÍTICO · 75+":"SIN RANGO"}
+function phasePnl(ph){return D.trades.filter(t=>Number(t.phase||1)===ph).reduce((a,t)=>a+Number(t.pnl||0),0)}
+function phaseState(ph){let p=phasePnl(ph);if(p>=6)return["OBJETIVO CUMPLIDO","complete"];if(p<=-6)return["LÍMITE ALCANZADO · STOP","blocked"];return[p>0?"EN PROGRESO":"EN ESPERA",p>0?"progress":"idle"]}
+function weekLosses(){let now=new Date(),dayN=now.getDay()||7, start=new Date(now);start.setDate(now.getDate()-dayN+1);start.setHours(0,0,0,0);return D.trades.filter(t=>t.result==="loss"&&new Date(t.date+"T00:00:00")>=start).length}
+function dailyKill(){return loss()>=2||pnl()<=-1}
+function renderFunding(){[1,2].forEach(ph=>{let p=phasePnl(ph),pct=Math.max(0,Math.min(100,(p/6)*100)),[txt,cls]=phaseState(ph);$("#phasePnl"+ph).textContent=(p>=0?"+":"")+p.toFixed(2)+"%";$("#phaseBar"+ph).style.width=pct+"%";$("#phaseStatus"+ph).textContent="FASE "+ph+" · "+txt;$("#phaseStatus"+ph).className="phase-status "+cls});let real=phasePnl(3);$("#phasePnl3").textContent=(real>=0?"+":"")+real.toFixed(2)+"%";$("#phaseBar3").style.width=Math.max(0,Math.min(100,50+real*10))+"%";$("#phaseStatus3").textContent=real< -6?"REAL · DEFENSA MÁXIMA":"REAL · PROTECCIÓN DE CAPITAL";$("#bufferPnl1").textContent=(phasePnl(1)>=0?"+":"")+phasePnl(1).toFixed(2)+"%";$("#bufferPnl2").textContent=(phasePnl(2)>=0?"+":"")+phasePnl(2).toFixed(2)+"%";$("#buffer1").textContent=Math.max(0,6+phasePnl(1)).toFixed(2)+"%";$("#buffer2").textContent=Math.max(0,6+phasePnl(2)).toFixed(2)+"%";let dl=dailyKill();$("#dailyLosses").textContent=loss();$("#dailyPnl").textContent=(pnl()>=0?"+":"")+pnl().toFixed(2)+"%";$("#weeklyLosses").textContent=weekLosses();$("#dailyLockState").textContent=dl?"LOCKED":"ARMED";$("#killMessage").textContent=dl?"KILL SWITCH ACTIVO · No más operaciones hoy. El proceso queda cerrado aunque aparezca otra oportunidad.":weekLosses()>=3?"LÍMITE SEMANAL · Ya alcanzaste 3 pérdidas esta semana. Prioridad: conservar capital.":"Máximo operativo: 1 operación, 2 pérdidas o −1.00% diario. Máximo 3 pérdidas por semana."}
+function render(){let [st,risk,desc,k]=state(),s=score(),range=mentalRange(k);$("#state").textContent=st;$("#risk").textContent=risk;$("#score").textContent=range;$("#gaugeNum").textContent=range;$("#desc").textContent=desc;$("#badge").textContent=k==="optimal"?"● 1% AUTORIZADO":k==="normal"?"● 0.50% AUTORIZADO":k==="caution"?"● 0.25% REDUCIDO":k==="pause"?"Ⅱ PAUSA":k==="blocked"?"× BLOQUEADO":"● EN ESPERA";$("#badge").style.color=k==="optimal"?"var(--green)":k==="normal"?"var(--green)":k==="caution"?"var(--orange)":k==="blocked"?"var(--red)":"#687783";$("#gauge").style.background=`conic-gradient(${k==="blocked"?"var(--red)":k==="caution"?"var(--orange)":k==="pause"?"#c8a85a":"var(--lime)"} ${k==="blocked"?"100":k==="pause"?"75":k==="caution"?"50":k==="normal"?"35":k==="optimal"?"20":"0"}%,#1c262d 0)`;$("#pnl").textContent=(pnl()>=0?"+":"")+pnl().toFixed(2)+"%";$("#pnl").className=pnl()<0?"loss":"";$("#losses").textContent=loss();$("#drawdown").textContent=dd().toFixed(2)+"%";$("#todayTrades").textContent=today().length;let a=avg();$("#process").textContent=a??"—";$("#processBar").style.width=(a||0)+"%";$("#processText").textContent=a===null?"Registra operaciones para medir tu proceso.":a>=85?"Tu ejecución está sólida. Mantén el proceso igual durante las pérdidas.":a>=65?"Hay variabilidad. Observa qué ocurre antes de tus peores trades.":"Tu proceso necesita atención aunque el resultado haya sido positivo.";$("#rules").textContent=D.trades.length?Math.round(D.trades.filter(t=>t.followed).length/D.trades.length*100)+"%":"—";$("#emotion").textContent=D.trades.length?Math.max(0,Math.round(100-(D.trades.reduce((a,t)=>a+(t.before+t.during+t.after)/3,0)/D.trades.length)*8))+"%":"—";let locked=k==="wait"||k==="blocked"||k==="pause"||dailyKill()||weekLosses()>=3;$("#lock").style.display=locked?"flex":"none";$("#tradeForm button[type=submit]").disabled=locked;$("#lock b").textContent=k==="wait"?"⛔ CHECK-IN REQUIRED":k==="blocked"?"⛔ TRADING BLOCKED":k==="pause"?"Ⅱ TRADING PAUSED":dailyKill()?"⛔ DAILY KILL SWITCH":weekLosses()>=3?"⛔ WEEKLY LIMIT":"";$("#lock span").textContent=k==="wait"?"Haz un check-in mental nuevo para autorizar la siguiente operación.":k==="blocked"?"Tu estado psicológico no autoriza asumir riesgo ahora.":k==="pause"?"Haz una pausa antes de volver al mercado.":dailyKill()?"Alcanzaste el límite diario. No más operaciones hoy.":weekLosses()>=3?"Alcanzaste el límite semanal. Prioridad: conservar capital.":"";$("#formRisk").textContent="Risk "+risk;$("#trisk").value=risk==="1.00%"?1:risk==="0.25%"?.25:.5;renderFunding();rows();analytics();preview()}
+function rows(){let a=[...D.trades].reverse();$("#total").textContent=D.trades.length+" trades";$("#rows").innerHTML=a.slice(0,25).map(t=>`<tr><td>${t.time}</td><td>${t.image?`<img class="trade-thumb" src="${t.image}" alt="Captura del trade" data-img="${t.id}">`:`<span class="no-photo">—</span>`}</td><td class="${t.result}">${t.result==="win"?"GANADA":t.result==="loss"?"PERDIDA":"TABLAS"}</td><td class="${t.pnl>=0?"win":"loss"}">${t.pnl>=0?"+":""}${t.pnl.toFixed(2)}%</td><td>${t.risk.toFixed(2)}%</td><td>${t.quality?String(t.quality).toUpperCase():"—"}</td><td>${t.process}/100</td><td>${esc(t.notes||"—")}</td><td><button class="review-trade" data-id="${t.id}" title="Revisar operación">↗</button><button class="delete-trade" data-id="${t.id}" title="Eliminar operación">×</button></td></tr>`).join("")||'<tr><td colspan="9">Aún no hay operaciones.</td></tr>';$$(".trade-thumb").forEach(im=>im.onclick=()=>openImage(im.src));$$(".review-trade").forEach(btn=>btn.onclick=()=>reviewTrade(btn.dataset.id));$$(".delete-trade").forEach(btn=>btn.onclick=()=>deleteTrade(btn.dataset.id))} 
+function deleteTrade(id){const trade=D.trades.find(t=>String(t.id)===String(id));if(!trade)return;const ok=confirm(`¿Eliminar esta operación de ${trade.time}?\\n\\nResultado: ${trade.result.toUpperCase()}\\nP&L: ${trade.pnl>=0?"+":""}${trade.pnl.toFixed(2)}%\\n\\nEsta acción no se puede deshacer.`);if(!ok)return;D.trades=D.trades.filter(t=>String(t.id)!==String(id));save();render()}
+function analytics(){let n=D.trades.length,w=D.trades.filter(t=>t.result==="win").length,a=avg();$("#atotal").textContent=n;$("#awin").textContent=n?Math.round(w/n*100)+"%":"0%";$("#aprocess").textContent=a===null?"—":a+"/100";$("#arisk").textContent=n?(D.trades.reduce((x,t)=>x+t.risk,0)/n).toFixed(2)+"%":"0%";let title="Recopilando datos...",text="Después de varias operaciones aparecerán patrones.";if(n>=5){let bad=D.trades.filter(t=>!t.followed||t.fomo||t.revenge).length;if(bad/n>=.4){title="Tu ejecución es la principal variable";text="Hay demasiadas operaciones con FOMO, venganza o ruptura de reglas. Corrige eso antes de aumentar el riesgo."}else if(a>=85){title="Tu proceso es sólido";text="Tu prioridad es conservar el proceso durante una mala racha."}else{title="Reduce la variación de tu proceso";text="Tu ejecución cambia demasiado entre operaciones. Observa tus peores operaciones."}}$("#diag").textContent=title;$("#diagp").textContent=text;$("#bars").innerHTML=D.trades.slice(-20).map(t=>`<div class="bar ${t.pnl>=0?"pos":"neg"}" style="height:${Math.max(5,Math.min(100,Math.abs(t.pnl)*12+5))}%"></div>`).join("")}
+function preview(){let[s,r,d,k]=state();$("#resultTitle").textContent=s+" · "+mentalRangeSpan(k);$("#resultText").textContent="Riesgo autorizado: "+r+" — "+d}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function go(id){$$(".page").forEach(x=>x.classList.toggle("active",x.id===id));$$(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.page===id));let names={dashboard:"Centro de control",checkin:"Mental Check",trades:"Trade Log",analytics:"Analytics",protocol:"Protocol",data:"Data / Backup"};$("#title").textContent=names[id];$("#crumb").textContent=id.toUpperCase();render()}
+$$(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.page));$$("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+[["stress","os"],["anxiety","oa"],["energy","oe"],["confidence","oc"],["urgency","ou"]].forEach(([a,b])=>$("#"+a).oninput=()=>$("#"+b).textContent=$("#"+a).value);
+$$('.yn').forEach(g=>{g.dataset.value='';g.querySelectorAll('button').forEach(x=>x.className='');g.onclick=e=>{if(e.target.tagName!=='BUTTON')return;g.dataset.value=e.target.textContent==='YES'?'true':'false';g.querySelectorAll('button').forEach(x=>x.className='');e.target.className=e.target.textContent==='YES'?'yes':'no'}});
+function flag(name,positive=false){let v=$('[data-f="'+name+'"]').dataset.value;if(v==='')return null;return v==='true'}
+function buildCheckin(){return{stress:+$('#stress').value,anxiety:+$('#anxiety').value,energy:+$('#energy').value,confidence:+$('#confidence').value,urgency:+$('#urgency').value,recover:flag('recover'),fomo:flag('fomo'),stable:flag('stable'),ruleBreak:flag('ruleBreak'),sleepDebt:flag('sleepDebt'),distracted:flag('distracted'),acceptLoss:flag('acceptLoss'),prove:flag('prove'),tension:flag('tension'),clearPlan:flag('clearPlan'),revenge:flag('revenge')}}
+function checkinComplete(c){return c && ['recover','fomo','stable','ruleBreak','sleepDebt','distracted','acceptLoss','prove','tension','clearPlan','revenge'].every(k=>c[k]!==null)}
+function mentalAdvice(){let c=D.checkin,s=score();if(!c||s===null)return{level:"EN ESPERA",title:"Primero evalúa tu estado.",text:"El sistema convertirá tus respuestas en una recomendación concreta antes de autorizar riesgo.",actions:[]};let [st]=state(),acts=[];if(c.recover)acts.push(["No busques recuperar hoy","danger"]);if(c.revenge)acts.push(["Corta la sesión","danger"]);if(c.acceptLoss===false)acts.push(["Acepta el riesgo antes de entrar","danger"]);if(c.clearPlan===false)acts.push(["Define el gatillo exacto","warn"]);if(c.sleepDebt===false)acts.push(["Descansa antes de operar","warn"]);if(c.distracted)acts.push(["Resuelve / aparta la distracción","warn"]);if(c.fomo)acts.push(["Deja pasar la entrada si se va","warn"]);if(c.prove)acts.push(["No necesitas tener razón","warn"]);if(c.tension)acts.push(["Respira y baja activación","warn"]);if(!acts.length)acts.push(["Ejecuta solo tu plan","good"],["Acepta terminar en 0 trades","good"]);if(st==="BLOQUEADO")return{level:"NO OPERAR",title:"Tu estado necesita distancia del mercado.",text:"No intentes cambiar esta lectura buscando una entrada. El mejor movimiento ahora es salir de la ejecución y volver cuando recuperes estabilidad.",actions:acts};if(st==="PAUSAR")return{level:"PAUSA",title:"Reduce activación antes de decidir.",text:"Haz una pausa de 10–15 minutos, aléjate del gráfico y vuelve a evaluar. Si el estado no mejora, termina la sesión.",actions:acts};if(st==="PRECAUCIÓN")return{level:"RIESGO REDUCIDO",title:"Observa más de lo que ejecutas.",text:"Tu estado permite seguir mirando, pero no necesitas demostrar nada. Solo toma un setup excepcional y respeta el riesgo reducido.",actions:acts};if(st==="ÓPTIMO")return{level:"HASTA 1% AUTORIZADO",title:"Tu estado está en rango óptimo.",text:"Mentalmente estás en condiciones de asumir hasta 1% de riesgo. Eso no obliga a usarlo: la calidad del setup, el drawdown y las reglas de la cuenta siguen teniendo prioridad.",actions:acts.concat([["1% solo si el setup y el riesgo de cuenta lo justifican","good"]])};return{level:"MENTALMENTE APTO",title:"Tu estado está dentro de parámetros.",text:"No confundas estar bien con estar obligado a operar. Espera una oportunidad que cumpla tu protocolo completo.",actions:acts}}
+function renderAdvice(){let a=mentalAdvice();$("#adviceLevel").textContent=a.level;$("#adviceTitle").textContent=a.title;$("#adviceText").textContent=a.text;$("#adviceActions").innerHTML=a.actions.map(x=>`<span class="${x[1]}">${x[0]}</span>`).join("")}
+$("#saveCheck").onclick=()=>{let c=buildCheckin();if(!checkinComplete(c)){alert("Completa todas las preguntas YES / NO antes de calcular tu estado.");return;}D.checkin=c;save();render();renderAdvice();};
+let pendingImage="";
+function clearPhoto(){pendingImage="";$("#tradeImage").value="";$("#photoPreview").hidden=true;$("#photoPreview").removeAttribute("src");$("#photoPlaceholder").hidden=false;$("#removePhoto").hidden=true}
+function setPhoto(file){
+  if(!file)return;
+  if(!/^image\/(png|jpe?g|webp)$/i.test(file.type)){alert("Usa una imagen JPG, PNG o WEBP.");return}
+  if(file.size>12*1024*1024){alert("La captura pesa demasiado. Máximo 12 MB.");return}
+  const reader=new FileReader();
+  reader.onload=()=>{const img=new Image();img.onload=()=>{const max=1400;let w=img.width,h=img.height;if(Math.max(w,h)>max){const scale=max/Math.max(w,h);w=Math.round(w*scale);h=Math.round(h*scale)}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);pendingImage=c.toDataURL("image/jpeg",.78);$("#photoPreview").src=pendingImage;$("#photoPreview").hidden=false;$("#photoPlaceholder").hidden=true;$("#removePhoto").hidden=false};img.src=reader.result};
+  reader.readAsDataURL(file);
+}
+$("#tradeImage").onchange=e=>setPhoto(e.target.files[0]);
+$("#removePhoto").onclick=clearPhoto;
+const drop=$("#photoDrop");["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag")}));["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag")}));drop.addEventListener("drop",e=>setPhoto(e.dataTransfer.files[0]));
+
+$("#tradeForm").onsubmit=e=>{e.preventDefault();let[,risk]=state();if(risk==="0%"||risk==="—"||dailyKill()||weekLosses()>=3)return;if($("#quality").value==="gamma"){alert("GAMMA = NO TRADE. Espera una oportunidad de mayor calidad.");return;}let t={id:Date.now(),date:day(),time:new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}),result:$("#tr").value,risk:+$("#trisk").value,pnl:+$("#tpnl").value,before:+$("#before").value,during:+$("#during").value,after:+$("#after").value,followed:$("#followed").checked,fomo:$("#tfomo").checked,revenge:$("#revenge").checked,notes:$("#notes").value.trim(),image:pendingImage,phase:+$("#phase").value,quality:$("#quality").value};t.process=ps(t);D.trades.push(t);D.checkin=null;save();e.target.reset();$("#followed").checked=true;$("#quality").value="alpha";clearPhoto();render()};
+$("#export").onclick=()=>{let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:"application/json"}));a.download="UNKNOWN OS-backup.json";a.click()};
+$("#import").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{D=JSON.parse(r.result);save();render();alert("Backup importado correctamente.")}catch{alert("Backup inválido.")}};r.readAsText(f)};
+$("#reset").onclick=()=>{if(confirm("¿Borrar todo el historial local?")){D={checkin:null,trades:[],fundingPhase:1};save();render()}};
+$$('.phase-tab').forEach(btn=>btn.onclick=()=>{let ph=btn.dataset.phaseView;$$('.phase-tab').forEach(x=>x.classList.toggle('active',x===btn));[1,2,3].forEach(n=>$('#fundingPhase'+n).hidden=String(n)!==String(ph));});
+const quotes=["NO NECESITAS UNA OPERACIÓN. NECESITAS DISCIPLINA.","EL MERCADO NO TE DEBE NADA. TU PROCESO SÍ TE DEBE RESPETO.","ES MEJOR PERDER UNA ENTRADA QUE PERDER EL CONTROL.","SI NECESITAS RECUPERAR, YA NO ESTÁS EJECUTANDO.","LA PACIENCIA TAMBIÉN ES UNA POSICIÓN.","UN BUEN TRADER SABE CUÁNDO NO HACER NADA.","NO BUSQUES ACCIÓN. BUSCA CALIDAD.","PROTEGE TU CAPITAL Y DEJA QUE EL MERCADO HABLE.","EMPEZAR ES FÁCIL. PERSISTIR ES UN ARTE.","LA GESTIÓN DE RIESGO ES TU MEJOR DEFENSA.","NO OPERAR TAMBIÉN ES UNA DECISIÓN.","PUEDES GANAR DURANTE 200 DÍAS Y PERDERLO TODO EN UNO.","LA DISCIPLINA TE PROTEGE CUANDO LA CONFIANZA TE TRAICIONA.","NO NECESITAS ENCONTRAR UNA OPERACIÓN. NECESITAS RECONOCER UNA BUENA."];let quoteI=0;function rotateQuote(){quoteI=(quoteI+1)%quotes.length;$("#quoteText").textContent=quotes[quoteI];$("#quoteIndex").textContent=`SIGNAL ${String(quoteI+1).padStart(2,"0")} / ${String(quotes.length).padStart(2,"0")}`}setInterval(rotateQuote,9000);
+function updateWatch(){let d=new Date(),h=d.getHours(),active=h>=21||h<1;let el=$("#watchState"),topState=$("#timeWatchState"),topHint=$("#timeWatchHint");if(active){el.textContent="WATCH WINDOW · ACTIVE";topState.textContent="WATCH ACTIVE";topHint.textContent="21:00 — 01:00";document.body.classList.add("watch-active")}else{el.textContent="WATCH WINDOW · STANDBY";topState.textContent="WATCH STANDBY";topHint.textContent="21:00 — 01:00";document.body.classList.remove("watch-active")}$("#watchHint").textContent=active?"MARKET · MONITORING · WAITING":"21:00 — 01:00"}
+function tick(){let d=new Date();$("#clock").textContent=d.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"});$("#date").textContent=d.toLocaleDateString("es-MX",{weekday:"short",day:"numeric",month:"short"}).toUpperCase();updateWatch()}setInterval(tick,1000);tick();render();
+</script>
+
+<div id="imageModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:50;align-items:center;justify-content:center;padding:30px;backdrop-filter:blur(8px)">
+  <button id="closeImage" type="button" style="position:absolute;right:24px;top:20px;width:40px;height:40px;border:1px solid #35434c;background:#10161b;color:#fff;border-radius:9px;font-size:22px;cursor:pointer">×</button>
+  <img id="modalImage" alt="Captura ampliada de la operación" style="max-width:95%;max-height:90%;object-fit:contain;border:1px solid #35434c;border-radius:10px;box-shadow:0 20px 80px rgba(0,0,0,.55)">
+</div>
+<script>
+function openImage(src){$("#modalImage").src=src;$("#imageModal").style.display="flex"}
+$("#closeImage").onclick=()=>$("#imageModal").style.display="none";
+$("#imageModal").onclick=e=>{if(e.target.id==="imageModal")$("#imageModal").style.display="none"};
+</script>
+
+<div id="reviewModal" class="review-modal">
+  <div class="review-panel">
+    <button id="closeReview" class="review-close">×</button>
+    <div class="eyebrow">TRADE REVIEW / ARCHIVE</div>
+    <h2 id="reviewTitle">OPERACIÓN</h2>
+    <div class="review-layout">
+      <div class="review-image-wrap"><img id="reviewImage" alt="Captura de la operación"><div id="reviewNoImage">SIN CAPTURA</div></div>
+      <div class="review-info">
+        <div class="review-stats"><div><span>RESULTADO</span><b id="rvResult">—</b></div><div><span>P&L</span><b id="rvPnl">—</b></div><div><span>RIESGO</span><b id="rvRisk">—</b></div><div><span>PROCESO</span><b id="rvProcess">—</b></div></div>
+        <div class="review-emotions"><div><span>ANTES</span><b id="rvBefore">—</b></div><div><span>DURANTE</span><b id="rvDuring">—</b></div><div><span>DESPUÉS</span><b id="rvAfter">—</b></div></div>
+        <div class="review-flags" id="rvFlags"></div>
+        <div class="review-notes"><span>NOTAS</span><p id="rvNotes">—</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const boot=document.getElementById("bootScreen"), progress=document.getElementById("bootProgress");
+  const lines=[1,2,3,4,5].map(n=>document.getElementById("bootLine"+n));
+  let i=0;
+  const timer=setInterval(()=>{if(i<lines.length){lines[i].classList.add("show");i++;progress.style.width=(i/5*100)+"%";if(i===3)document.getElementById("bootLine3").innerHTML='RISK ENGINE: <b>ONLINE</b>';}else{clearInterval(timer);document.getElementById("bootStatus").textContent="ACCESS GRANTED · PRIVATE INSTANCE";setTimeout(()=>boot.classList.add("hide"),700)}},280);
+})();
+function updateRitual(){let a=[...document.querySelectorAll("[data-ritual]")];let n=a.filter(x=>x.checked).length;document.getElementById("ritualScore").textContent=Math.round(n/a.length*100)+"%"}
+document.querySelectorAll("[data-ritual]").forEach(x=>x.addEventListener("change",updateRitual));
+function updateFirewall(){
+  let s=score(), st=state(), a=mentalAdvice(), title=document.getElementById("firewallTitle"), text=document.getElementById("firewallText");
+  document.getElementById("firewallRisk").textContent=st[1];document.getElementById("firewallState").textContent=st[0];
+  document.getElementById("firewallBar").style.width=(s??0)+"%";
+  title.textContent=a.title;
+  text.textContent=a.text;
+}
+const oldRender=render;render=function(){oldRender();updateRitual();updateFirewall();renderAdvice()};
+function reviewTrade(id){
+  const t=D.trades.find(x=>String(x.id)===String(id));if(!t)return;
+  document.getElementById("reviewTitle").textContent="OPERACIÓN · "+t.time;
+  document.getElementById("rvResult").textContent=t.result==="win"?"GANADA":t.result==="loss"?"PERDIDA":"TABLAS";
+  document.getElementById("rvPnl").textContent=(t.pnl>=0?"+":"")+Number(t.pnl).toFixed(2)+"%";
+  document.getElementById("rvRisk").textContent=Number(t.risk).toFixed(2)+"%";
+  document.getElementById("rvProcess").textContent=t.process+"/100";
+  document.getElementById("rvBefore").textContent=t.before+"/10";document.getElementById("rvDuring").textContent=t.during+"/10";document.getElementById("rvAfter").textContent=t.after+"/10";
+  document.getElementById("rvNotes").textContent=t.notes||"Sin notas.";
+  const im=document.getElementById("reviewImage"), no=document.getElementById("reviewNoImage");if(t.image){im.src=t.image;im.hidden=false;no.hidden=true}else{im.hidden=true;no.hidden=false}
+  document.getElementById("rvFlags").innerHTML=[t.followed?"PLAN SEGUIDO":"PLAN ROTO",t.fomo?"FOMO":null,t.revenge?"VENGANZA":null].filter(Boolean).map(x=>"<span>"+x+"</span>").join("");
+  document.getElementById("reviewModal").classList.add("open")
+}
+document.getElementById("closeReview").onclick=()=>document.getElementById("reviewModal").classList.remove("open");
+document.getElementById("reviewModal").onclick=e=>{if(e.target.id==="reviewModal")e.currentTarget.classList.remove("open")};
+</script>
+</body></html>
+<style>
+.nav button.active{box-shadow:inset 2px 0 #f2f2f2}
+.mark{box-shadow:0 0 22px rgba(22,140,255,.08)}
+.hero{box-shadow:inset 0 1px rgba(22,140,255,.06)}
+.btn.primary{background:#f2f2f2;border-color:#f2f2f2;color:#fff;box-shadow:0 0 22px rgba(22,140,255,.12)}
+.btn.primary:hover{background:#ffffff;border-color:#ffffff}
+.gauge{box-shadow:0 0 35px rgba(22,140,255,.07)}
+input[type=range]{accent-color:#f2f2f2}
+.track span{background:#f2f2f2}
+.upload-icon{color:#f2f2f2}
+.photo-drop.drag{border-color:#f2f2f2;background:#081421}
+</style>
