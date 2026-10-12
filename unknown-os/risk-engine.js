@@ -139,22 +139,7 @@
   });
   document.querySelectorAll(".yn").forEach(el => el.addEventListener("click", invalidateCheck));
 
-  // Gate form submission before the existing handler can record a trade.
-  const form = $("#tradeForm");
-  if (form) form.addEventListener("submit", function(e){
-    const r = accountRisk($("#phase").value);
-    const requested = Number($("#trisk").value);
-    if (r.blocked || !Number.isFinite(requested) || requested <= 0 || requested > r.maxRisk + 1e-9) {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      updatePanel();
-      alert(r.blocked
-        ? "OPERACIÓN BLOQUEADA. El motor no autoriza riesgo con el estado mental o el margen actual de la cuenta."
-        : "Riesgo superior al máximo autorizado (" + r.maxRisk.toFixed(2) + "%). El motor ajustó el campo; revisa la operación antes de registrarla.");
-    }
-  }, true);
-
-  // Wrap render so the cap stays current after saves, deletions, imports and cloud hydration.
+  // The engine advises and caps the suggested risk, but never prevents logging a trade for review.\n\n  // Wrap render so the cap stays current after saves, deletions, imports and cloud hydration.
   if (typeof window.render === "function") {
     const originalRender = window.render;
     window.render = function(){ originalRender.apply(this, arguments); updatePanel(); };
