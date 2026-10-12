@@ -203,6 +203,48 @@ input[type=range],.ritual-list input{accent-color:#eee}
 @media(max-width:650px){.boot-content:before{font-size:6px;letter-spacing:.08em}.boot-screen:after{font-size:6px}.candle-scene:before,.candle-scene:after{opacity:.08}.hero:before{opacity:.09}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* UNKNOW OS · MONOCHROME CYBER TERMINAL */
+.boot-screen{background:radial-gradient(ellipse at 50% 42%,#171717 0%,#050505 48%,#010101 100%)}
+.boot-screen:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.25;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.09) 4px),linear-gradient(90deg,transparent 49.9%,rgba(255,255,255,.055) 50%,transparent 50.1%);background-size:100% 4px,100% 100%}
+.boot-screen:after{content:"UNKNOW // PRIVATE NODE // 21:00–01:00";position:absolute;left:5vw;bottom:4vh;color:#777;font:8px ui-monospace,Consolas,monospace;letter-spacing:.2em}
+.boot-content:before{content:"01010100 01010010 01000001 01000100 01000101 00100000 01010011 01000001 01000110 01000101";display:block;max-width:100%;overflow:hidden;white-space:nowrap;color:#555;font:8px ui-monospace,Consolas,monospace;letter-spacing:.18em;margin-bottom:24px;animation:binaryFlicker 2.5s steps(2,end) infinite}
+.boot-mark{color:#f5f5f5;text-shadow:0 0 12px rgba(255,255,255,.3),0 0 42px rgba(255,255,255,.1);position:relative;animation:bootGlitch 4s infinite}
+.boot-mark span{color:#fff;opacity:.72}
+.boot-cursor{display:inline-block;color:#fff!important;margin-left:4px;animation:cursorBlink .8s steps(2,start) infinite}
+.boot-line{font-size:10px;color:#888}
+.boot-line i{font-style:normal;color:#666;margin-right:8px}
+.boot-line b{color:#fff;text-shadow:0 0 8px rgba(255,255,255,.15)}
+.boot-progress{background:#222;border:1px solid #303030;height:3px}
+.boot-progress span{background:#fff;box-shadow:0 0 8px #fff,0 0 22px rgba(255,255,255,.25)}
+.boot-status{color:#777}
+.boot-noise{opacity:.12;background-image:repeating-linear-gradient(0deg,transparent 0 2px,rgba(255,255,255,.32) 3px),repeating-linear-gradient(90deg,transparent 0 70px,rgba(255,255,255,.06) 71px)}
+@keyframes cursorBlink{to{visibility:hidden}}
+@keyframes binaryFlicker{0%,100%{opacity:.35}50%{opacity:.85}}
+@keyframes bootGlitch{0%,91%,100%{transform:translateX(0);text-shadow:0 0 12px rgba(255,255,255,.3),0 0 42px rgba(255,255,255,.1);clip-path:inset(0)}92%{transform:translateX(3px);clip-path:inset(15% 0 65%);text-shadow:-4px 0 #fff,4px 0 #777}94%{transform:translateX(-3px);clip-path:inset(60% 0 10%)}96%{transform:translateX(0);clip-path:inset(0)}}
+.brand .mark{border-color:#444;color:#fff;box-shadow:0 0 18px rgba(255,255,255,.04)}
+.brand small,.eyebrow{color:#777}
+.nav button.active{box-shadow:inset 2px 0 #fff;border-color:#333}
+.sidefoot i,.watch-dot{background:#eee;box-shadow:0 0 10px rgba(255,255,255,.3)}
+.btn.primary{background:#eee!important;border-color:#eee!important;color:#080808!important}
+input[type=range],.ritual-list input{accent-color:#eee}
+.track span,.firewall-bar span{background:#eee}
+@media(prefers-reduced-motion:reduce){.boot-mark,.boot-cursor,.boot-content:before{animation:none}}
+/* Floating binary code layers */
+.candle-scene:before,.candle-scene:after{position:absolute;top:-30%;bottom:-30%;width:22%;writing-mode:vertical-rl;word-break:break-all;overflow:hidden;pointer-events:none;color:#888;font:10px/1.8 ui-monospace,Consolas,monospace;letter-spacing:.3em;opacity:.2;white-space:normal;content:"01010110 01010101 01001110 01001011 01001110 01001111 01010111 01011111 01001111 01010011 01001110 01001111 01010100 01000001 01001110 01000100 01001001 01001110 01000111"}
+.candle-scene:before{left:2%;animation:binaryDrift 28s linear infinite}
+.candle-scene:after{right:2%;animation:binaryDrift 34s linear infinite reverse;opacity:.13}
+@keyframes binaryDrift{0%{transform:translateY(-12%)}100%{transform:translateY(12%)}}
+/* Trading chart overlays: monochrome grid, price trace, and data readout */
+.hero{background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px),radial-gradient(circle at 80% 40%,rgba(255,255,255,.07),transparent 28%),linear-gradient(135deg,#111,#050505 70%)!important;background-size:34px 34px,34px 34px,auto,auto!important}
+.hero:before{content:"";position:absolute;z-index:1;right:18px;top:18px;width:38%;height:42%;opacity:.18;pointer-events:none;background:linear-gradient(145deg,transparent 0 8%,#eee 8.3% 8.7%,transparent 9% 20%,#aaa 20.3% 20.7%,transparent 21% 33%,#eee 33.3% 33.7%,transparent 34% 48%,#777 48.3% 48.7%,transparent 49% 62%,#eee 62.3% 62.7%,transparent 63%);clip-path:polygon(0 75%,12% 62%,22% 70%,34% 35%,45% 47%,57% 22%,70% 39%,82% 12%,100% 24%,100% 100%,0 100%);border-bottom:1px solid #aaa}
+.hero-left,.radar{z-index:2}
+.kpi:before{content:"0101";position:absolute;right:12px;top:8px;font:7px ui-monospace,Consolas,monospace;color:#454545;letter-spacing:.2em}
+.card h3:after{content:" / SYS";font:7px ui-monospace,Consolas,monospace;color:#555;letter-spacing:.14em}
+.state h2{animation:softGlitch 7s infinite}
+@keyframes softGlitch{0%,94%,100%{text-shadow:0 0 22px rgba(255,255,255,.08);transform:translateX(0)}95%{text-shadow:-2px 0 #fff,2px 0 #777;transform:translateX(1px)}97%{text-shadow:2px 0 #aaa,-2px 0 #fff;transform:translateX(-1px)}}
+@media(max-width:650px){.boot-content:before{font-size:6px;letter-spacing:.08em}.boot-screen:after{font-size:6px}.candle-scene:before,.candle-scene:after{opacity:.08}.hero:before{opacity:.09}}
+</style>
 </head>
 <body>
 <div id="bootScreen" class="boot-screen">
@@ -629,15 +671,3 @@ document.getElementById("reviewModal").onclick=e=>{if(e.target.id==="reviewModal
   openSession();
 })();
 </script></body></html>
-<style>
-.nav button.active{box-shadow:inset 2px 0 #f2f2f2}
-.mark{box-shadow:0 0 22px rgba(22,140,255,.08)}
-.hero{box-shadow:inset 0 1px rgba(22,140,255,.06)}
-.btn.primary{background:#f2f2f2;border-color:#f2f2f2;color:#fff;box-shadow:0 0 22px rgba(22,140,255,.12)}
-.btn.primary:hover{background:#ffffff;border-color:#ffffff}
-.gauge{box-shadow:0 0 35px rgba(22,140,255,.07)}
-input[type=range]{accent-color:#f2f2f2}
-.track span{background:#f2f2f2}
-.upload-icon{color:#f2f2f2}
-.photo-drop.drag{border-color:#f2f2f2;background:#081421}
-</style>
