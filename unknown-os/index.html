@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>UNKNOWN OS — Centro de control</title>
+<title>Unknow OS — Centro de control</title>
 
 <style>
-/* UNKNOWN OS — DARK TRADER IDENTITY */
+/* Unknow OS — DARK TRADER IDENTITY */
 body{background:#020202;color:#ededed;overflow-x:hidden}
 body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
 .candle-scene{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0;opacity:.20;filter:blur(.15px)}
@@ -57,8 +57,8 @@ input[type=range]{accent-color:#eee}
 /* mysterious status pulse */
 .state-line:after{content:"";width:5px;height:5px;border-radius:50%;background:#ddd;box-shadow:0 0 13px #fff;animation:pulse 2.2s infinite}
 @keyframes pulse{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.4)}}
-.unknown-tag{font-family:ui-monospace,Consolas,monospace;font-size:7px;letter-spacing:.2em;color:#555;margin:-9px 0 13px;animation:flicker 5s infinite}@keyframes flicker{0%,92%,100%{opacity:1}94%{opacity:.35}96%{opacity:.8}}
-.quote-card{position:relative;min-height:150px;overflow:hidden}.quote-card:after{content:"UNKNOWN";position:absolute;right:-8px;bottom:-25px;font-size:58px;font-weight:950;letter-spacing:-.08em;color:#151515;pointer-events:none}.quote-mark{font-family:Georgia,serif;font-size:48px;line-height:.7;color:#777;margin:4px 0 5px}.quote-card h3{max-width:560px;font-size:17px;line-height:1.25;letter-spacing:-.035em;margin:0;position:relative;z-index:1}.quote-line{height:1px;width:48px;background:#777;margin:14px 0 8px}.quote-card small{font-size:7px;color:#555;letter-spacing:.2em}
+.unknow-tag{font-family:ui-monospace,Consolas,monospace;font-size:7px;letter-spacing:.2em;color:#555;margin:-9px 0 13px;animation:flicker 5s infinite}@keyframes flicker{0%,92%,100%{opacity:1}94%{opacity:.35}96%{opacity:.8}}
+.quote-card{position:relative;min-height:150px;overflow:hidden}.quote-card:after{content:"Unknow";position:absolute;right:-8px;bottom:-25px;font-size:58px;font-weight:950;letter-spacing:-.08em;color:#151515;pointer-events:none}.quote-mark{font-family:Georgia,serif;font-size:48px;line-height:.7;color:#777;margin:4px 0 5px}.quote-card h3{max-width:560px;font-size:17px;line-height:1.25;letter-spacing:-.035em;margin:0;position:relative;z-index:1}.quote-line{height:1px;width:48px;background:#777;margin:14px 0 8px}.quote-card small{font-size:7px;color:#555;letter-spacing:.2em}
 .watch-status{display:flex;align-items:center;gap:8px;margin-top:17px;font-family:ui-monospace,Consolas,monospace}.watch-status b{font-size:8px;letter-spacing:.13em}.watch-status small{color:#555;font-size:7px;letter-spacing:.12em}.watch-dot{width:5px;height:5px;border-radius:50%;background:#777;box-shadow:0 0 10px #aaa}.watch-active .watch-dot{background:#fff;box-shadow:0 0 14px #fff;animation:pulse 1.5s infinite}
 </style>
 <style>
@@ -153,7 +153,7 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 @media(max-width:900px){.protocol-grid{grid-template-columns:1fr}.quality-grid,.weekly-grid{grid-template-columns:1fr}.kill-grid{grid-template-columns:1fr}.risk-table>div{grid-template-columns:1fr}.buffer-grid{grid-template-columns:1fr}}
 </style>
 
-<style id="unknown-cloud-css">
+<style id="unknow-cloud-css">
 .cloud-launch{position:fixed;right:16px;bottom:16px;z-index:80;border:1px solid #303b43;background:rgba(8,8,8,.94);color:#ddd;border-radius:9px;padding:9px 11px;font:700 8px ui-monospace,Consolas,monospace;letter-spacing:.14em;cursor:pointer;backdrop-filter:blur(10px)}
 .cloud-launch:hover{border-color:#777}.cloud-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#777;margin-right:7px;box-shadow:0 0 8px #888}.cloud-dot.on{background:#fff;box-shadow:0 0 12px #fff}
 .cloud-modal{display:none;position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.78);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:18px}
@@ -167,10 +167,10 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
   <div class="boot-noise"></div>
   <div class="boot-content">
     <div class="boot-mark">UNKN<span>O</span>WN</div>
-    <div class="boot-line" id="bootLine1">INITIALIZING UNKNOWN OS<span>...</span></div>
+    <div class="boot-line" id="bootLine1">INITIALIZING Unknow OS<span>...</span></div>
     <div class="boot-line" id="bootLine2">LOADING PSYCHOLOGICAL FIREWALL<span>...</span></div>
     <div class="boot-line" id="bootLine3">RISK ENGINE: <b>OFFLINE</b></div>
-    <div class="boot-line" id="bootLine4">IDENTITY: <b>UNKNOWN</b></div>
+    <div class="boot-line" id="bootLine4">IDENTITY: <b>Unknow</b></div>
     <div class="boot-line" id="bootLine5">ACCESS: <b>RESTRICTED</b></div>
     <div class="boot-progress"><span id="bootProgress"></span></div>
     <div class="boot-status" id="bootStatus">ESTABLISHING PRIVATE INSTANCE</div>
@@ -190,7 +190,7 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 
 <div class="app">
 <aside class="sidebar">
-  <div class="brand"><div class="mark">TR</div><div><b>UNKNOWN OS</b><small>CONTROL PSICOLÓGICO</small></div></div>
+  <div class="brand"><div class="mark">TR</div><div><b>Unknow OS</b><small>CONTROL PSICOLÓGICO</small></div></div>
   <div class="user"><div class="avatar">S</div><div><b>TRADER</b><small>ESPACIO PRIVADO</small></div><i class="online"></i></div>
   <div class="nav">
     <button class="active" data-page="dashboard"><span>01</span> RESUMEN</button>
@@ -206,7 +206,7 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 <main>
 <header class="top"><div><div class="crumb">TRADINGOS / <b id="crumb">RESUMEN</b></div><h1 id="title">Centro de control</h1></div><div class="time"><b id="clock">--:--</b><small id="date">---</small><span class="time-watch" id="timeWatch"><i></i><b id="timeWatchState">WATCH STANDBY</b><small id="timeWatchHint">21:00 — 01:00</small></span></div></header>
 
-<section class="page active" id="dashboard"><div class="unknown-tag">// IDENTITY UNKNOWN · SYSTEM ONLINE · PRIVATE INSTANCE</div>
+<section class="page active" id="dashboard"><div class="unknow-tag">// IDENTITY Unknow · SYSTEM ONLINE · PRIVATE INSTANCE</div>
   <div class="hero">
     <div class="hero-left">
       <div class="eyebrow">ESTADO PSICOLÓGICO ACTUAL</div>
@@ -251,7 +251,7 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
       <div class="firewall-meta"><span>RIESGO</span><b id="firewallRisk">—</b><span>ESTADO</span><b id="firewallState">SIN CHEQUEO</b></div>
     </div>
     <div class="card quote-card">
-      <div class="eyebrow">08 / UNKNOWN SIGNAL</div>
+      <div class="eyebrow">08 / Unknow SIGNAL</div>
       <div class="quote-mark">“</div>
       <h3 id="quoteText">NO NECESITAS UNA OPERACIÓN. NECESITAS DISCIPLINA.</h3>
       <div class="quote-line"></div>
@@ -323,7 +323,7 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 </section>
 
 <section class="page" id="protocol">
-<div class="intro"><small>05 / PROTOCOLO OPERATIVO</small><h2>UNKNOWN OS Trading Protocol.</h2><p>Tu ventaja no es operar más. Es saber exactamente cuándo estás autorizado a asumir riesgo.</p></div>
+<div class="intro"><small>05 / PROTOCOLO OPERATIVO</small><h2>Unknow OS Trading Protocol.</h2><p>Tu ventaja no es operar más. Es saber exactamente cuándo estás autorizado a asumir riesgo.</p></div>
 <div class="protocol-grid">
 <div class="card rules-card"><div class="section">REGLAS OPERATIVAS <span>CORE</span></div>
 <div class="rule"><b>01 · WATCH WINDOW</b><span>21:00 — 01:00. Observar no significa entrar. Espera una oportunidad real.</span></div>
@@ -369,7 +369,7 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 
 <div class="card weekly-card"><div class="section">WEEKLY MISSION <span>PROCESS FIRST</span></div><div class="weekly-grid"><div><b>SEMANA 1</b><span>Operar únicamente setups de alta calidad.</span></div><div><b>SEMANA 2</b><span>Repetir lo que funcionó y eliminar errores.</span></div><div><b>SEMANA 3</b><span>Mantener el riesgo bajo aunque aparezca confianza.</span></div><div><b>SEMANA 4</b><span>Buscar oportunidades claras y confirmadas.</span></div></div></div>
 
-<div class="card quote-card protocol-quote"><div class="eyebrow">CORE MINDSET</div><div class="quote-mark">“</div><h3>NO NECESITAS ENCONTRAR UNA OPERACIÓN. NECESITAS RECONOCER UNA BUENA.</h3><div class="quote-line"></div><small>UNKNOWN OS · TRADING PROTOCOL</small></div>
+<div class="card quote-card protocol-quote"><div class="eyebrow">CORE MINDSET</div><div class="quote-mark">“</div><h3>NO NECESITAS ENCONTRAR UNA OPERACIÓN. NECESITAS RECONOCER UNA BUENA.</h3><div class="quote-line"></div><small>Unknow OS · TRADING PROTOCOL</small></div>
 </section>
 <section class="page" id="data">
 <div class="intro"><small>06 / DATA & BACKUP</small><h2>Tus datos. Tu máquina.</h2><p>Todo permanece en este navegador. No necesitas una cuenta ni servidor.</p></div>
@@ -378,7 +378,7 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 </main></div>
 
 <script>
-const KEY="UNKNOWN OS_V3";let D=load();function load(){try{return JSON.parse(localStorage.getItem(KEY))||{checkin:null,trades:[],fundingPhase:1}}catch{return{checkin:null,trades:[],fundingPhase:1}}}function save(){localStorage.setItem(KEY,JSON.stringify(D));if(window.unknownCloudSchedule)window.unknownCloudSchedule()}
+const KEY="Unknow OS_V3";let D=load();function load(){try{return JSON.parse(localStorage.getItem(KEY))||{checkin:null,trades:[],fundingPhase:1}}catch{return{checkin:null,trades:[],fundingPhase:1}}}function save(){localStorage.setItem(KEY,JSON.stringify(D));if(window.unknowCloudSchedule)window.unknowCloudSchedule()}
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s),day=()=>new Date().toISOString().slice(0,10);
 function today(){return D.trades.filter(t=>t.date===day())}function loss(){let n=0;for(const t of today().slice().reverse()){if(t.result==="loss")n++;else break}return n}
 function pnl(){return today().reduce((a,t)=>a+Number(t.pnl||0),0)}function dd(){let p=0,c=0,d=0;today().forEach(t=>{c+=t.pnl;p=Math.max(p,c);d=Math.min(d,c-p)});return d}
@@ -423,7 +423,7 @@ $("#removePhoto").onclick=clearPhoto;
 const drop=$("#photoDrop");["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag")}));["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag")}));drop.addEventListener("drop",e=>setPhoto(e.dataTransfer.files[0]));
 
 $("#tradeForm").onsubmit=e=>{e.preventDefault();let[,risk]=state();if(risk==="0%"||risk==="—"||dailyKill()||weekLosses()>=3||$("#quality").value==="gamma"){console.warn("Registro guardado para revisión; la autorización de ejecución no está activa o el setup es GAMMA.");}let t={id:Date.now(),date:day(),time:new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}),result:$("#tr").value,risk:+$("#trisk").value,pnl:+$("#tpnl").value,before:+$("#before").value,during:+$("#during").value,after:+$("#after").value,followed:$("#followed").checked,fomo:$("#tfomo").checked,revenge:$("#revenge").checked,notes:$("#notes").value.trim(),image:pendingImage,phase:+$("#phase").value,quality:$("#quality").value};t.process=ps(t);D.trades.push(t);D.checkin=null;save();e.target.reset();$("#followed").checked=true;$("#quality").value="alpha";clearPhoto();render()};
-$("#export").onclick=()=>{let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:"application/json"}));a.download="UNKNOWN OS-backup.json";a.click()};
+$("#export").onclick=()=>{let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(D,null,2)],{type:"application/json"}));a.download="Unknow OS-backup.json";a.click()};
 $("#import").onchange=e=>{let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{D=JSON.parse(r.result);save();render();alert("Backup importado correctamente.")}catch{alert("Backup inválido.")}};r.readAsText(f)};
 $("#reset").onclick=()=>{if(confirm("¿Borrar todo el historial local?")){D={checkin:null,trades:[],fundingPhase:1};save();render()}};
 $$('.phase-tab').forEach(btn=>btn.onclick=()=>{let ph=btn.dataset.phaseView;$$('.phase-tab').forEach(x=>x.classList.toggle('active',x===btn));[1,2,3].forEach(n=>$('#fundingPhase'+n).hidden=String(n)!==String(ph));});
@@ -497,9 +497,9 @@ document.getElementById("reviewModal").onclick=e=>{if(e.target.id==="reviewModal
 <div id="cloudModal" class="cloud-modal">
   <div class="cloud-panel">
     <button id="cloudClose" type="button" style="float:right;border:1px solid #333;background:#111;color:#aaa;border-radius:6px;width:30px;height:30px;cursor:pointer">×</button>
-    <div class="eyebrow">UNKNOWN OS / CLOUD SYNC</div>
+    <div class="eyebrow">Unknow OS / CLOUD SYNC</div>
     <h2>Private instance</h2>
-    <p>Inicia sesión para sincronizar trades, check-ins, estadísticas y respaldos entre tus dispositivos. Tu contraseña nunca se guarda en UNKNOWN OS.</p>
+    <p>Inicia sesión para sincronizar trades, check-ins, estadísticas y respaldos entre tus dispositivos. Tu contraseña nunca se guarda en Unknow OS.</p>
     <input id="cloudEmail" type="email" autocomplete="email" placeholder="Correo">
     <input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Contraseña">
     <div class="cloud-actions">
@@ -509,7 +509,7 @@ document.getElementById("reviewModal").onclick=e=>{if(e.target.id==="reviewModal
     <div id="cloudStatus" class="cloud-status"></div>
     <div id="cloudUser" class="cloud-user"><b id="cloudUserEmail">—</b><br><button id="cloudSyncNow" type="button">SYNC NOW</button> <button id="cloudSignOut" type="button">CERRAR SESIÓN</button></div>
   </div>
-</div><script id="unknown-cloud-js">
+</div><script id="unknow-cloud-js">
 (function(){
   const SUPABASE_URL="https://mlvewtibzfxjizehtdji.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY="sb_publishable_C6T6s78TJPD1lOtTBXX8Dg_2YwBRVwe";
@@ -530,17 +530,17 @@ document.getElementById("reviewModal").onclick=e=>{if(e.target.id==="reviewModal
   async function cloudSaveNow(){
     if(!cloudUser||cloudHydrating)return;
     const payload=JSON.parse(JSON.stringify(D));
-    const {error}=await cloudClient.from("unknown_os_data").upsert({user_id:cloudUser.id,payload,updated_at:new Date().toISOString()},{onConflict:"user_id"});
+    const {error}=await cloudClient.from("unknow_os_data").upsert({user_id:cloudUser.id,payload,updated_at:new Date().toISOString()},{onConflict:"user_id"});
     if(error){cstate(false,"CLOUD ERROR");cmsg("Cloud no disponible: "+error.message);return false}
     cstate(true,"CLOUD SYNCED");cmsg("Sincronizado · "+new Date().toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"}));return true;
   }
   function scheduleCloudSave(){if(!cloudUser||cloudHydrating)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(cloudSaveNow,900)}
-  window.unknownCloudSchedule=scheduleCloudSave;
+  window.unknowCloudSchedule=scheduleCloudSave;
   window.save=function(){localWrite();scheduleCloudSave()};
   async function hydrateCloud(){
     if(!cloudUser)return;
     cloudHydrating=true;cstate(true,"CLOUD LOADING");cmsg("Cargando tu instancia...");
-    const {data,error}=await cloudClient.from("unknown_os_data").select("payload").eq("user_id",cloudUser.id).maybeSingle();
+    const {data,error}=await cloudClient.from("unknow_os_data").select("payload").eq("user_id",cloudUser.id).maybeSingle();
     if(error){cloudHydrating=false;cstate(false,"CLOUD ERROR");cmsg("Revisa que la tabla y RLS estén configuradas.");return}
     if(data&&data.payload){
       const cloudData=data.payload||{};
