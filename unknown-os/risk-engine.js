@@ -31,7 +31,7 @@
         blocked = true; tierCap = 0; marginCap = 0;
         reason = "LÍMITE ABSOLUTO DE −6.00% ALCANZADO. Fase bloqueada.";
       } else {
-        tierCap = pnl >= 3 ? 1.00 : pnl > -2 ? 0.50 : pnl > -4 ? 0.33 : 0.25;
+        tierCap = pnl >= 3 ? 1.00 : pnl >= -2 ? 0.50 : pnl >= -4 ? 0.33 : 0.25;
         const remaining = 6 + pnl;
         // Keep 0.25% as a safety reserve: at -5.50%, cap remains 0.25%;
         // at -5.75%, no risk remains authorized.
