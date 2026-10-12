@@ -160,20 +160,47 @@ padding:6px 8px;font-size:9px;line-height:1;cursor:pointer;transition:.2s}
 .cloud-modal.open{display:flex}.cloud-panel{width:min(430px,94vw);background:#090909;border:1px solid #303030;border-radius:14px;padding:22px;box-shadow:0 25px 100px rgba(0,0,0,.7)}
 .cloud-panel h2{margin:7px 0 5px;font-size:23px;letter-spacing:-.05em}.cloud-panel p{font-size:9px;line-height:1.55;color:#727272;margin:0 0 17px}.cloud-panel input{width:100%;margin-top:8px;background:#050505;border:1px solid #292929;color:#eee;border-radius:7px;padding:11px;outline:none}.cloud-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:13px}.cloud-actions button{border:1px solid #333;background:#111;color:#ddd;border-radius:7px;padding:10px;font-size:8px;font-weight:800;letter-spacing:.1em;cursor:pointer}.cloud-actions .primary{background:#eee;color:#050505}.cloud-status{margin-top:12px;min-height:15px;color:#777;font-size:8px}.cloud-user{display:none;border-top:1px solid #222;margin-top:15px;padding-top:14px}.cloud-user b{font-size:9px}.cloud-user button{margin-top:10px;border:1px solid #333;background:#111;color:#aaa;border-radius:6px;padding:8px;font-size:7px;cursor:pointer}
 </style>
+<style>
+/* UNKNOW / CYBER TERMINAL OVERRIDE */
+:root{--hacker:#b8ff5c;--hacker-dim:#5d8734}
+.boot-screen{background:radial-gradient(ellipse at 50% 45%,#0b1608 0%,#030503 48%,#010201 100%)}
+.boot-screen:before{content:"";position:absolute;inset:0;opacity:.18;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(184,255,92,.13) 4px),linear-gradient(90deg,transparent 49.9%,rgba(184,255,92,.08) 50%,transparent 50.1%);background-size:100% 4px,100% 100%}
+.boot-screen:after{content:"UNKNOW // PRIVATE NODE // 21:00–01:00";position:absolute;left:5vw;bottom:4vh;color:#4c7130;font:8px ui-monospace,Consolas,monospace;letter-spacing:.2em}
+.boot-mark{color:#eaffd9;text-shadow:0 0 12px rgba(184,255,92,.5),0 0 42px rgba(184,255,92,.18);position:relative;animation:bootGlitch 4s infinite}
+.boot-mark span{color:var(--hacker);opacity:1}
+.boot-cursor{display:inline-block;color:var(--hacker)!important;margin-left:4px;animation:cursorBlink .8s steps(2,start) infinite}
+.boot-line{font-size:10px;color:#718b5d}
+.boot-line i{font-style:normal;color:var(--hacker-dim);margin-right:8px}
+.boot-line b{color:var(--hacker);text-shadow:0 0 8px rgba(184,255,92,.2)}
+.boot-progress{background:#1a2814;border:1px solid #26391c;height:3px}
+.boot-progress span{background:var(--hacker);box-shadow:0 0 8px var(--hacker),0 0 22px rgba(184,255,92,.5)}
+.boot-status{color:var(--hacker-dim)}
+.boot-noise{opacity:.09;background-image:repeating-linear-gradient(0deg,transparent 0 2px,rgba(184,255,92,.5) 3px),repeating-linear-gradient(90deg,transparent 0 70px,rgba(184,255,92,.09) 71px)}
+@keyframes cursorBlink{to{visibility:hidden}}
+@keyframes bootGlitch{0%,92%,100%{transform:translateX(0);text-shadow:0 0 12px rgba(184,255,92,.5),0 0 42px rgba(184,255,92,.18)}94%{transform:translateX(2px);text-shadow:-3px 0 #fff,3px 0 var(--hacker)}96%{transform:translateX(-2px)}}
+.brand .mark{border-color:#3a5427;color:#dfffc6;box-shadow:0 0 18px rgba(184,255,92,.06)}
+.brand small,.eyebrow{color:#71805f}
+.nav button.active{box-shadow:inset 2px 0 var(--hacker);border-color:#27351e}
+.sidefoot i,.watch-dot{background:var(--hacker);box-shadow:0 0 10px rgba(184,255,92,.45)}
+.btn.primary{background:var(--hacker)!important;border-color:var(--hacker)!important;color:#080b05!important}
+input[type=range],.ritual-list input{accent-color:var(--hacker)}
+.track span,.firewall-bar span{background:var(--hacker)}
+@media(prefers-reduced-motion:reduce){.boot-mark,.boot-cursor{animation:none}}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div id="bootScreen" class="boot-screen">
   <div class="boot-noise"></div>
   <div class="boot-content">
-    <div class="boot-mark">UNKN<span>O</span>WN</div>
-    <div class="boot-line" id="bootLine1">INITIALIZING Unknow OS<span>...</span></div>
-    <div class="boot-line" id="bootLine2">LOADING PSYCHOLOGICAL FIREWALL<span>...</span></div>
-    <div class="boot-line" id="bootLine3">RISK ENGINE: <b>OFFLINE</b></div>
-    <div class="boot-line" id="bootLine4">IDENTITY: <b>Unknow</b></div>
-    <div class="boot-line" id="bootLine5">ACCESS: <b>RESTRICTED</b></div>
+    <div class="boot-mark">UNKN<span>O</span>W<span class="boot-cursor">_</span></div>
+    <div class="boot-line" id="bootLine1"><i>[ 01 ]</i> INITIALIZING UNKNOW OS<span>...</span></div>
+    <div class="boot-line" id="bootLine2"><i>[ 02 ]</i> LOADING PSYCHOLOGICAL FIREWALL<span>...</span></div>
+    <div class="boot-line" id="bootLine3"><i>[ 03 ]</i> RISK ENGINE: <b>OFFLINE</b></div>
+    <div class="boot-line" id="bootLine4"><i>[ 04 ]</i> IDENTITY: <b>UNKNOW</b></div>
+    <div class="boot-line" id="bootLine5"><i>[ 05 ]</i> ACCESS: <b>RESTRICTED</b></div>
     <div class="boot-progress"><span id="bootProgress"></span></div>
-    <div class="boot-status" id="bootStatus">ESTABLISHING PRIVATE INSTANCE</div>
+    <div class="boot-status" id="bootStatus">BYPASSING PUBLIC ACCESS // PRIVATE INSTANCE</div>
   </div>
 </div>
 
