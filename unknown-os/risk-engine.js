@@ -1,4 +1,4 @@
-/* UNKNOWN OS · Account Risk Engine
+/* Unknow OS · Account Risk Engine
    Enforces account-risk caps using manually logged phase P&L.
    Phase 1/2 hard limit: -6%; preserve a 0.25% buffer.
 */
@@ -144,7 +144,7 @@
     const originalRender = window.render;
     window.render = function(){ originalRender.apply(this, arguments); updatePanel(); };
   }
-  window.unknownOSAccountRisk = accountRisk;
+  window.unknowOSAccountRisk = accountRisk;
   updatePanel();
   if (typeof render === "function") render();
 })();
