@@ -94,7 +94,7 @@
     const input = $("#trisk");
     if (input) {
       input.max = r.maxRisk.toFixed(2);
-      if (Number(input.value) > r.maxRisk + 1e-9) input.value = r.maxRisk.toFixed(2);
+      if (Number(input.value) > r.maxRisk + 1e-9 || (Number(input.value) <= 0 && r.maxRisk > 0)) input.value = r.maxRisk.toFixed(2);
     }
     const label = $("#formRisk");
     if (label) label.textContent = "MAX RISK " + r.maxRisk.toFixed(2) + "%";
