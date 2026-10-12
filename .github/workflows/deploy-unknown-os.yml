@@ -1,4 +1,4 @@
-name: Deploy UNKNOWN OS to GitHub Pages
+name: Deploy Unknow OS to GitHub Pages
 
 on:
   push:
@@ -26,11 +26,11 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Inject account risk engine
-        run: sed -i 's#</body>#<script src="./risk-engine.js"></script></body>#' unknown-os/index.html
+        run: sed -i 's#</body>#<script src="./risk-engine.js"></script></body>#' unknow-os/index.html
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: unknown-os
+          path: unknow-os
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
